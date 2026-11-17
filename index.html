@@ -1,0 +1,3210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Thipaw Delivery - Food, Bike Taxi & Express Errands</title>
+    <!-- App Icon & PWA Metadata for Android APK Packaging -->
+    <link rel="icon" type="image/jpeg" href="https://i.ibb.co/B5NfCWH9/1794811370987.jpg">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/B5NfCWH9/1794811370987.jpg">
+    <meta name="theme-color" content="#FF5722">
+    <meta name="apple-mobile-web-app-title" content="Thipaw Delivery">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans Myanmar', sans-serif;
+            background-color: #E2E8F0;
+            color: #0F172A;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .fade-in {
+            animation: fadeIn 0.2s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center items-start sm:py-4">
+
+    <!-- Mobile App Shell (Max 480px) -->
+    <div class="w-full max-w-[480px] bg-[#F8FAFC] min-h-screen sm:min-h-[850px] sm:max-h-[900px] sm:rounded-[2.25rem] sm:shadow-2xl sm:border sm:border-slate-200 flex flex-col overflow-hidden relative">
+
+        <!-- ========================================================= -->
+        <!-- 0. PRE-REGISTRATION TERMS & PRICING GUIDE SCREEN          -->
+        <!-- ========================================================= -->
+        <div id="terms-screen" class="flex-1 flex flex-col justify-between bg-white overflow-y-auto fade-in">
+            <div class="bg-gradient-to-br from-[#FF5722] to-[#FF6D00] pt-8 pb-9 px-6 text-center text-white rounded-b-[2.25rem] shadow-md relative">
+                <!-- Language Switcher Pill on Welcome -->
+                <div class="absolute top-4 right-4 flex bg-black/20 p-0.5 rounded-full text-[11px] font-bold">
+                    <button type="button" onclick="setAppLanguage('en')" id="welcome-lang-en" class="px-2.5 py-1 rounded-full bg-white text-[#FF5722]">EN</button>
+                    <button type="button" onclick="setAppLanguage('my')" id="welcome-lang-my" class="px-2.5 py-1 rounded-full text-white">မြန်မာ</button>
+                </div>
+
+                <div class="w-20 h-20 bg-white rounded-2xl p-1.5 mx-auto mb-3 shadow-lg flex items-center justify-center overflow-hidden">
+                    <img src="https://i.ibb.co/B5NfCWH9/1794811370987.jpg" alt="Thipaw Delivery Logo"
+                        onerror="this.src='https://placehold.co/120x120/FFFFFF/FF5722?text=TD'"
+                        class="w-full h-full object-contain rounded-xl">
+                </div>
+                <h1 class="text-2xl font-extrabold tracking-tight">Thipaw Delivery</h1>
+                <p id="t-welcome-sub" class="text-xs text-orange-100 mt-1">Delivery Rates & Service Terms in Hsipaw</p>
+            </div>
+
+            <div class="flex-1 px-5 py-5 space-y-4 overflow-y-auto">
+                <!-- Dynamic Pricing Table (Controlled by Admin) -->
+                <div class="bg-orange-50/70 border border-orange-200 rounded-2xl p-4 space-y-3">
+                    <h2 id="t-rates-heading" class="text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
+                        <span>💵</span>
+                        <span>Delivery & Bike Taxi Rates</span>
+                    </h2>
+
+                    <div id="dynamic-rates-list" class="space-y-2 text-xs">
+                        <!-- Rendered dynamically from Admin Pricing Config -->
+                    </div>
+                </div>
+
+                <!-- Dynamic Service Rules (Controlled by Admin) -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2 text-xs text-slate-700">
+                    <h3 id="t-rules-heading" class="font-extrabold text-slate-900">📋 Terms & Conditions</h3>
+                    <ul id="dynamic-rules-list" class="space-y-1.5 list-disc pl-4 text-[11px] leading-relaxed">
+                        <!-- Rendered dynamically from Admin Rules Config -->
+                    </ul>
+                </div>
+            </div>
+
+            <div class="p-5 bg-white border-t border-slate-100">
+                <button id="t-agree-btn" onclick="acceptTermsAndProceed()"
+                    class="w-full py-4 px-5 bg-gradient-to-r from-[#FF5722] to-[#FF6D00] hover:opacity-95 active:scale-[0.99] text-white font-extrabold rounded-2xl shadow-lg shadow-orange-500/25 transition text-sm">
+                    I Agree - Continue to Account Setup
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 1. ACCOUNT REGISTRATION / EDIT PROFILE (LIVE SELFIE + ADDR) -->
+        <!-- ========================================================= -->
+        <div id="register-screen" class="hidden flex-1 flex flex-col justify-between bg-white overflow-y-auto fade-in">
+            <div class="bg-gradient-to-br from-[#FF5722] to-[#FF6D00] pt-8 pb-9 px-6 text-center text-white rounded-b-[2.5rem] shadow-md">
+                <div class="w-16 h-16 bg-white rounded-2xl p-1 mx-auto mb-2 shadow-md flex items-center justify-center overflow-hidden">
+                    <img src="https://i.ibb.co/B5NfCWH9/1794811370987.jpg" alt="Thipaw Delivery"
+                        onerror="this.src='https://placehold.co/100x100/FFFFFF/FF5722?text=TD'"
+                        class="w-full h-full object-contain rounded-xl">
+                </div>
+                <h1 class="text-xl font-extrabold tracking-tight">Thipaw Delivery</h1>
+                <p id="t-reg-sub" class="text-xs text-orange-100 mt-0.5">Complete your verified profile to start</p>
+            </div>
+
+            <form onsubmit="handleRegister(event)" class="flex-1 px-6 pt-5 pb-8 space-y-4 flex flex-col justify-center">
+                <div class="text-center">
+                    <h2 id="reg-title" class="text-lg font-extrabold text-slate-900">Create Account</h2>
+                    <p id="t-reg-photo-note" class="text-[11px] text-slate-500 mt-0.5">Take a real live selfie photo for security verification</p>
+                </div>
+
+                <!-- Live Camera Selfie Capture (Blocks cartoon/fake gallery images) -->
+                <div class="flex flex-col items-center">
+                    <button type="button" onclick="triggerLiveSelfieCapture()" class="group relative focus:outline-none">
+                        <div id="avatar-preview-box" class="w-24 h-24 rounded-full bg-orange-50 border-2 border-dashed border-[#FF5722] flex flex-col items-center justify-center overflow-hidden group-hover:border-[#E64A19] transition shadow-2xs">
+                            <svg class="w-8 h-8 text-[#FF5722]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <span id="t-take-selfie" class="text-[10px] font-extrabold text-[#FF5722] mt-1">Take Selfie</span>
+                        </div>
+                        <span class="absolute bottom-0 right-0 bg-[#FF5722] text-white w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md border-2 border-white">
+                            📷
+                        </span>
+                    </button>
+                    <!-- Strict Camera Capture Input -->
+                    <input type="file" id="reg-photo" accept="image/*" capture="user" class="hidden" onchange="processVerifiedSelfie(event)">
+                    <span id="selfie-verified-tag" class="hidden text-[10px] font-bold text-emerald-600 mt-1.5">✅ Live Camera Photo Verified</span>
+                </div>
+
+                <div>
+                    <label for="reg-name" id="t-label-name" class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
+                    <input type="text" id="reg-name" required placeholder="Enter your full name"
+                        class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#FF5722] focus:ring-2 focus:ring-orange-500/20 outline-none transition">
+                </div>
+
+                <div>
+                    <label for="reg-phone" id="t-label-phone" class="block text-xs font-bold text-slate-700 mb-1">Phone Number</label>
+                    <input type="tel" id="reg-phone" required placeholder="09xxxxxxxxx"
+                        class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#FF5722] focus:ring-2 focus:ring-orange-500/20 outline-none transition">
+                </div>
+
+                <div>
+                    <label for="reg-address" id="t-label-address" class="block text-xs font-bold text-slate-700 mb-1">Home Address / Ward</label>
+                    <input type="text" id="reg-address" required placeholder="Ward, Street, House No. in Hsipaw"
+                        class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#FF5722] focus:ring-2 focus:ring-orange-500/20 outline-none transition">
+                </div>
+
+                <button type="submit" id="t-reg-submit"
+                    class="w-full py-3.5 px-5 bg-gradient-to-r from-[#FF5722] to-[#FF6D00] hover:opacity-95 active:scale-[0.99] text-white font-extrabold rounded-2xl shadow-lg shadow-orange-500/25 transition text-sm">
+                    Save & Continue
+                </button>
+            </form>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 2. MAIN CUSTOMER SUPER-APP SHELL                          -->
+        <!-- ========================================================= -->
+        <div id="main-app-shell" class="hidden flex-1 flex flex-col overflow-hidden">
+
+            <div id="main-scroll-area" class="flex-1 overflow-y-auto no-scrollbar pb-24">
+
+                <!-- ------------------------------------------------------- -->
+                <!-- TAB 1: HOME SCREEN                                      -->
+                <!-- ------------------------------------------------------- -->
+                <div id="view-home" class="fade-in">
+                    <!-- Orange Header -->
+                    <div class="bg-gradient-to-b from-[#FF5722] to-[#FF6D00] px-5 pt-4 pb-12 text-white relative">
+                        <div class="flex items-center justify-between gap-2">
+                            <!-- TD Logo + Brand Name -->
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-11 h-11 rounded-2xl bg-white p-1 shadow-sm flex items-center justify-center overflow-hidden shrink-0">
+                                    <img src="https://i.ibb.co/B5NfCWH9/1794811370987.jpg" alt="TD Logo"
+                                        onerror="this.src='https://placehold.co/80x80/FFFFFF/FF5722?text=TD'"
+                                        class="w-full h-full object-contain rounded-xl">
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-1.5">
+                                        <span id="t-city-badge" class="text-[10px] bg-white/25 px-2 py-0.5 rounded-full font-bold">📍 Hsipaw</span>
+                                    </div>
+                                    <h1 class="text-base font-extrabold tracking-tight mt-0.5 truncate">Thipaw Delivery</h1>
+                                </div>
+                            </div>
+
+                            <!-- User Avatar + Discreet Staff/Admin Buttons -->
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button onclick="switchBottomTab('account')" title="Profile" class="relative">
+                                    <img id="home-user-avatar" src="" alt="User" class="w-9 h-9 rounded-full object-cover border-2 border-white bg-orange-100 shadow-2xs">
+                                </button>
+                                <button onclick="openRiderPortalGate()"
+                                    class="px-2.5 py-1.5 rounded-xl bg-black/20 hover:bg-black/30 active:scale-95 text-white text-[11px] font-bold flex items-center gap-1 transition border border-white/20">
+                                    <span>🛵</span>
+                                    <span id="t-rider-btn">Rider</span>
+                                </button>
+                                <button onclick="openPinModal()"
+                                    class="px-2.5 py-1.5 rounded-xl bg-black/25 hover:bg-black/35 active:scale-95 text-white text-[11px] font-bold flex items-center gap-1 transition border border-white/20">
+                                    <span>🔒</span>
+                                    <span>Admin</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Quick Search Bar -->
+                    <div class="px-5 -mt-6 relative z-10">
+                        <button onclick="openService('food')"
+                            class="w-full bg-white rounded-2xl shadow-md shadow-slate-900/5 border border-slate-100 px-4 py-3.5 flex items-center gap-3 text-left hover:border-orange-300 transition active:scale-[0.99]">
+                            <svg class="w-5 h-5 text-[#FF5722] shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z"/>
+                            </svg>
+                            <span id="t-search-placeholder" class="text-sm text-slate-400 font-medium truncate">Search shops or menus in Hsipaw...</span>
+                        </button>
+                    </div>
+
+                    <!-- Main Service Grid (5 Services: Food, Custom Order, Bike Taxi, Satellite Map, Open Shop) -->
+                    <div class="px-4 pt-6">
+                        <div class="grid grid-cols-3 gap-3">
+                            <!-- 1. Food (Shop Menus Only) -->
+                            <button onclick="openService('food')" class="flex flex-col items-center bg-white p-3 rounded-2xl border border-slate-200/70 shadow-2xs hover:border-orange-300 transition active:scale-95">
+                                <div class="w-12 h-12 rounded-2xl bg-orange-100 border border-orange-200 flex items-center justify-center">
+                                    <span class="text-2xl">🍜</span>
+                                </div>
+                                <span id="t-svc-food" class="text-xs font-extrabold text-slate-800 mt-2 text-center">Food</span>
+                                <span id="t-svc-food-sub" class="text-[10px] text-slate-500 text-center">Shop Menus</span>
+                            </button>
+
+                            <!-- 2. Custom Order ("Order Anything" for items not in shops) -->
+                            <button onclick="openService('custom')" class="flex flex-col items-center bg-white p-3 rounded-2xl border border-slate-200/70 shadow-2xs hover:border-orange-300 transition active:scale-95">
+                                <div class="w-12 h-12 rounded-2xl bg-emerald-100 border border-emerald-200 flex items-center justify-center">
+                                    <span class="text-2xl">🛍️</span>
+                                </div>
+                                <span id="t-svc-custom" class="text-xs font-extrabold text-slate-800 mt-2 text-center">Order</span>
+                                <span id="t-svc-custom-sub" class="text-[10px] text-slate-500 text-center">Custom Buy</span>
+                            </button>
+
+                            <!-- 3. Bike Taxi (Grab-Style Map Booking) -->
+                            <button onclick="openService('bike')" class="flex flex-col items-center bg-white p-3 rounded-2xl border border-slate-200/70 shadow-2xs hover:border-orange-300 transition active:scale-95">
+                                <div class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center">
+                                    <span class="text-2xl">🏍️</span>
+                                </div>
+                                <span id="t-svc-bike" class="text-xs font-extrabold text-slate-800 mt-2 text-center">Bike Taxi</span>
+                                <span id="t-svc-bike-sub" class="text-[10px] text-slate-500 text-center">Book Ride</span>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mt-3">
+                            <!-- 4. Satellite Map -->
+                            <button onclick="switchBottomTab('map')" class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-200/70 shadow-2xs hover:border-orange-300 transition active:scale-95 text-left">
+                                <div class="w-11 h-11 rounded-xl bg-sky-100 border border-sky-200 flex items-center justify-center shrink-0">
+                                    <span class="text-xl">🛰️</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <span id="t-svc-map" class="block text-xs font-extrabold text-slate-800 truncate">Satellite Map</span>
+                                    <span id="t-svc-map-sub" class="block text-[10px] text-slate-500 truncate">Explore Hsipaw</span>
+                                </div>
+                            </button>
+
+                            <!-- 5. Open Shop Channel -->
+                            <button onclick="openShopPortal()" class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-200/70 shadow-2xs hover:border-orange-300 transition active:scale-95 text-left">
+                                <div class="w-11 h-11 rounded-xl bg-rose-100 border border-rose-200 flex items-center justify-center shrink-0">
+                                    <span class="text-xl">🏪</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <span id="t-svc-shop" class="block text-xs font-extrabold text-slate-800 truncate">Open Shop</span>
+                                    <span id="t-svc-shop-sub" class="block text-[10px] text-slate-500 truncate">Merchant Portal</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Active Order Banner -->
+                    <div id="home-active-order-wrap" class="px-5 pt-5 hidden"></div>
+
+                    <!-- Featured Shops Preview on Home Screen -->
+                    <div class="px-5 pt-5 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <h2 id="t-home-shops-title" class="text-xs font-extrabold text-slate-800">🏪 Partner Shops on Thipaw Delivery</h2>
+                            <button onclick="openService('food')" id="t-view-all-shops" class="text-[11px] font-bold text-[#FF5722]">View All →</button>
+                        </div>
+                        <div id="home-shops-strip" class="flex gap-3 overflow-x-auto no-scrollbar pb-1"></div>
+                    </div>
+
+                    <!-- Pricing Info & Support -->
+                    <div class="px-5 pt-4 space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="showTermsScreen()" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center justify-between text-left hover:border-orange-300 transition">
+                                <div>
+                                    <p id="t-home-rate-lbl" class="text-[10px] text-slate-400 font-bold">Delivery Rates</p>
+                                    <p id="home-starting-rate" class="text-xs font-extrabold text-[#FF5722] mt-0.5">From 3,500 Ks</p>
+                                </div>
+                                <div class="w-8 h-8 rounded-xl bg-orange-100 text-[#FF5722] flex items-center justify-center text-sm font-bold">
+                                    📋
+                                </div>
+                            </button>
+
+                            <a href="tel:09790001122" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center justify-between hover:border-orange-300 transition">
+                                <div>
+                                    <p id="t-home-call-lbl" class="text-[10px] text-slate-400 font-bold">Support Hotline</p>
+                                    <p id="t-home-call-btn" class="text-xs font-extrabold text-slate-800 mt-0.5">Call Direct</p>
+                                </div>
+                                <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-bold">
+                                    📞
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------------------- -->
+                <!-- SERVICE A: FOOD STOREFRONT (MULTI-ITEM / MULTI-SHOP CART) -->
+                <!-- ------------------------------------------------------- -->
+                <div id="view-food" class="hidden fade-in">
+                    <div class="bg-[#FF5722] text-white px-5 py-4 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+                        <div class="flex items-center gap-3">
+                            <button onclick="switchBottomTab('home')" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-bold transition">
+                                ←
+                            </button>
+                            <div>
+                                <h1 id="t-food-header" class="text-base font-extrabold">🍜 Food & Shop Menus</h1>
+                                <p id="t-food-sub" class="text-[11px] text-orange-100">Select items from one or multiple shops in a single order</p>
+                            </div>
+                        </div>
+                        <button onclick="openService('custom')" class="px-2.5 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-[11px] font-bold">
+                            + Custom Buy
+                        </button>
+                    </div>
+
+                    <div class="p-5 space-y-4">
+                        <!-- Search Shops & Menus -->
+                        <div class="relative">
+                            <input type="text" id="food-menu-search" oninput="renderFoodShopBrowser()"
+                                placeholder="Search food item or shop name..."
+                                class="w-full rounded-xl bg-white border border-slate-300 pl-9 pr-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-[#FF5722] outline-none">
+                            <span class="absolute left-3 top-2.5 text-slate-400 text-sm">🔍</span>
+                        </div>
+
+                        <!-- Shop Channels Browser -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h2 id="t-shop-channels-lbl" class="text-xs font-extrabold text-slate-800">🏪 Partner Shops</h2>
+                                <span id="food-shop-count" class="text-[11px] text-slate-500 font-bold"></span>
+                            </div>
+
+                            <!-- Horizontal Shop Pills -->
+                            <div id="food-shop-pills" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+
+                            <!-- Selected Shop Info & Menu Grid -->
+                            <div id="food-selected-shop-panel" class="space-y-3"></div>
+                        </div>
+
+                        <!-- Unified Multi-Item / Multi-Shop Cart & Checkout -->
+                        <form onsubmit="submitFoodOrder(event)" class="bg-white p-4 rounded-2xl border-2 border-orange-200 shadow-xs space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 id="t-cart-title" class="text-sm font-extrabold text-[#FF5722] flex items-center gap-1.5">
+                                    <span>🛒</span>
+                                    <span>Your Order Basket</span>
+                                </h3>
+                                <span id="cart-shop-badge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800"></span>
+                            </div>
+
+                            <!-- Dynamic Cart Items List -->
+                            <div id="food-cart-list" class="space-y-2">
+                                <p id="t-cart-empty" class="text-xs text-slate-400 text-center py-4 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                                    Tap "+ Add" on any menu item above to build your order
+                                </p>
+                            </div>
+
+                            <!-- Totals Breakdown -->
+                            <div id="food-cart-summary" class="hidden bg-orange-50/70 p-3 rounded-xl border border-orange-200/80 space-y-1 text-xs">
+                                <div class="flex justify-between text-slate-600">
+                                    <span id="t-items-subtotal-lbl">Items Subtotal:</span>
+                                    <span id="cart-items-total" class="font-bold text-slate-900">0 Ks</span>
+                                </div>
+                                <div class="flex justify-between text-slate-600">
+                                    <span id="t-deliv-fee-lbl">Delivery Fee:</span>
+                                    <span id="cart-deliv-fee" class="font-bold text-[#FF5722]">3,500 Ks</span>
+                                </div>
+                                <div class="flex justify-between text-sm font-extrabold text-slate-900 pt-1 border-t border-orange-200">
+                                    <span id="t-grand-total-lbl">Estimated Total:</span>
+                                    <span id="cart-grand-total" class="text-[#FF5722]">3,500 Ks</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="food-address" id="t-deliv-addr-lbl" class="block text-xs font-extrabold text-slate-800 mb-1.5">
+                                    Delivery Address
+                                </label>
+                                <input type="text" id="food-address" required oninput="recalculateFoodCartTotals()"
+                                    placeholder="Ward, Street, House No. or Landmark"
+                                    class="w-full rounded-xl border border-slate-300 p-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#FF5722] outline-none transition">
+                            </div>
+
+                            <div class="space-y-2">
+                                <button type="button" id="food-loc-btn" onclick="captureFoodLocation()"
+                                    class="w-full py-3 px-4 rounded-xl border-2 border-dashed border-[#FF5722] bg-orange-50 hover:bg-orange-100/80 active:scale-[0.99] text-[#FF5722] font-bold text-xs transition flex items-center justify-center gap-2">
+                                    <span>📍</span>
+                                    <span id="t-attach-gps">Attach Current GPS Location</span>
+                                </button>
+
+                                <div id="food-fee-box" class="hidden rounded-xl bg-emerald-50 border border-emerald-200 p-2.5 text-[11px] font-bold text-emerald-700">
+                                    ✅ GPS Attached (<span id="food-coords-text" class="font-mono"></span>)
+                                </div>
+                            </div>
+
+                            <button type="submit" id="t-place-food-btn"
+                                class="w-full py-4 px-5 bg-gradient-to-r from-[#FF5722] to-[#FF6D00] hover:opacity-95 active:scale-[0.99] text-white font-extrabold rounded-2xl shadow-lg shadow-orange-500/25 transition text-sm">
+                                Place Unified Order
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------------------- -->
+                <!-- SERVICE A2: CUSTOM "ORDER ANYTHING" SCREEN (မှာမည်)      -->
+                <!-- ------------------------------------------------------- -->
+                <div id="view-custom" class="hidden fade-in">
+                    <div class="bg-[#FF5722] text-white px-5 py-4 flex items-center gap-3 sticky top-0 z-20 shadow-xs">
+                        <button onclick="switchBottomTab('home')" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-bold transition">
+                            ←
+                        </button>
+                        <div>
+                            <h1 id="t-custom-header" class="text-base font-extrabold">🛍️ Order Anything (Custom Buy)</h1>
+                            <p id="t-custom-sub" class="text-[11px] text-orange-100">Request items from any store or market in Hsipaw</p>
+                        </div>
+                    </div>
+
+                    <form onsubmit="submitCustomOrder(event)" class="p-5 space-y-4">
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                            <div>
+                                <label for="custom-shop-name" id="t-custom-shop-lbl" class="block text-xs font-extrabold text-slate-800 mb-1.5">
+                                    Store / Market Name (Optional)
+                                </label>
+                                <input type="text" id="custom-shop-name"
+                                    placeholder="e.g., Central Market, Pharmacy, Grocery Store"
+                                    class="w-full rounded-xl border border-slate-300 p-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#FF5722] outline-none">
+                            </div>
+
+                            <div>
+                                <label for="custom-items" id="t-custom-items-lbl" class="block text-xs font-extrabold text-slate-800 mb-1.5">
+                                    What would you like us to buy?
+                                </label>
+                                <textarea id="custom-items" rows="3" required
+                                    placeholder="List the items and quantities clearly..."
+                                    class="w-full rounded-xl border border-slate-300 p-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#FF5722] outline-none"></textarea>
+                            </div>
+
+                            <div>
+                                <label for="custom-address" id="t-custom-addr-lbl" class="block text-xs font-extrabold text-slate-800 mb-1.5">
+                                    Delivery Address
+                                </label>
+                                <input type="text" id="custom-address" required oninput="updateCustomFeeDisplay()"
+                                    placeholder="Ward, Street, House No. or Landmark"
+                                    class="w-full rounded-xl border border-slate-300 p-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#FF5722] outline-none">
+                            </div>
+
+                            <button type="button" id="custom-loc-btn" onclick="captureCustomLocation()"
+                                class="w-full py-3 px-4 rounded-xl border-2 border-dashed border-[#FF5722] bg-orange-50 hover:bg-orange-100/80 text-[#FF5722] font-bold text-xs transition flex items-center justify-center gap-2">
+                                <span>📍</span>
+                                <span id="t-custom-gps-btn">Attach Current GPS Location</span>
+                            </button>
+
+                            <div id="custom-fee-box" class="rounded-xl bg-orange-50 border border-orange-200 p-3 flex items-center justify-between">
+                                <span id="t-custom-fee-lbl" class="text-xs font-bold text-slate-700">Estimated Delivery Fee:</span>
+                                <span id="custom-fee-display" class="text-sm font-extrabold text-[#FF5722]">3,500 Ks</span>
+                            </div>
+
+                            <button type="submit" id="t-custom-submit-btn"
+                                class="w-full py-4 px-5 bg-gradient-to-r from-[#FF5722] to-[#FF6D00] hover:opacity-95 text-white font-extrabold rounded-2xl shadow-lg shadow-orange-500/25 transition text-sm">
+                                Submit Custom Order
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- ------------------------------------------------------- -->
+                <!-- SERVICE B: GRAB-STYLE BIKE TAXI SCREEN                  -->
+                <!-- ------------------------------------------------------- -->
+                <div id="view-bike" class="hidden fade-in">
+                    <!-- Grab-style Top Header -->
+                    <div class="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-20">
+                        <button onclick="switchBottomTab('home')" class="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-800 font-bold text-lg">
+                            ←
+                        </button>
+                        <div class="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-full text-xs font-extrabold text-slate-800">
+                            <span>⚡</span>
+                            <span id="t-bike-now">Book Bike Taxi Now</span>
+                        </div>
+                        <button onclick="openGoogleMapPicker('dropoff')" class="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-700 text-base" title="Map">
+                            🗺️
+                        </button>
+                    </div>
+
+                    <form onsubmit="submitBikeOrder(event)" class="p-4 space-y-4">
+                        <!-- Grab-Style Dual Connected Input Card -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 relative">
+                            <div class="flex gap-3">
+                                <!-- Left Visual Connector (Blue Dot -> Dotted Line -> Red Pin) -->
+                                <div class="flex flex-col items-center pt-3 pb-3 shrink-0">
+                                    <div class="w-3.5 h-3.5 rounded-full border-[3.5px] border-blue-600 bg-white"></div>
+                                    <div class="w-0.5 flex-1 border-l-2 border-dotted border-slate-300 my-1"></div>
+                                    <div class="w-3.5 h-3.5 rounded-full bg-[#FF5722] flex items-center justify-center">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Inputs -->
+                                <div class="flex-1 space-y-2.5 min-w-0">
+                                    <!-- Pickup Input -->
+                                    <div class="relative">
+                                        <input type="text" id="bike-pickup" required onfocus="activeBikeField='pickup'"
+                                            placeholder="Pickup location..."
+                                            class="w-full rounded-xl bg-slate-50 border border-slate-200 focus:border-emerald-600 focus:bg-white px-3.5 py-2.5 pr-9 text-xs font-semibold text-slate-900 outline-none transition">
+                                        <button type="button" onclick="captureBikePickupGPS()" title="Use Current GPS"
+                                            class="absolute right-2.5 top-2 text-blue-600 hover:text-blue-700 text-sm">
+                                            🎯
+                                        </button>
+                                    </div>
+
+                                    <!-- Drop-off Input -->
+                                    <div class="relative">
+                                        <input type="text" id="bike-dropoff" required onfocus="activeBikeField='dropoff'" oninput="recalculateBikeFare()"
+                                            placeholder="Where to? (Drop-off destination)"
+                                            class="w-full rounded-xl bg-slate-50 border border-slate-200 focus:border-[#FF5722] focus:bg-white px-3.5 py-2.5 pr-9 text-xs font-semibold text-slate-900 outline-none transition">
+                                        <button type="button" onclick="openGoogleMapPicker('dropoff')" title="Pin on Map"
+                                            class="absolute right-2.5 top-2 text-[#FF5722] text-sm">
+                                            📍
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Grab-style Tab Strip (Recent | Suggested | Saved) -->
+                            <div class="flex items-center gap-2 mt-3 pt-2.5 border-t border-slate-100 text-[11px] font-bold">
+                                <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700">Suggested Places</span>
+                                <span id="bike-gps-status-pill" class="text-slate-400 truncate">Tap any place or choose on map</span>
+                            </div>
+                        </div>
+
+                        <!-- Grab-Style Place List with Floating "Choose on Map" Pill -->
+                        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden relative">
+                            <!-- Current Location Row -->
+                            <button type="button" onclick="captureBikePickupGPS()"
+                                class="w-full px-4 py-3 flex items-start gap-3 text-left hover:bg-slate-50 border-b border-slate-100 transition">
+                                <span class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm shrink-0 mt-0.5">🎯</span>
+                                <div class="min-w-0 flex-1">
+                                    <p id="t-grab-curr-loc" class="text-xs font-extrabold text-slate-900">Current Location</p>
+                                    <p id="grab-curr-sub" class="text-[11px] text-slate-500 truncate">Tap to detect live GPS coordinates in Hsipaw</p>
+                                </div>
+                            </button>
+
+                            <!-- Suggested Hsipaw Locations -->
+                            <div id="grab-suggested-places" class="divide-y divide-slate-100">
+                                <!-- Populated via JS -->
+                            </div>
+
+                            <!-- Floating "Choose on Map" Pill (Exact Grab UX) -->
+                            <div class="py-3 bg-slate-50/80 flex justify-center border-t border-slate-100">
+                                <button type="button" onclick="openGoogleMapPicker(activeBikeField)"
+                                    class="px-4 py-2 rounded-full bg-white border border-slate-200 shadow-md hover:border-[#FF5722] text-slate-800 font-extrabold text-xs flex items-center gap-2 active:scale-95 transition">
+                                    <span>🗺️</span>
+                                    <span id="t-choose-on-map">Choose on Map</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Fare Summary & Confirm Ride Button -->
+                        <div class="bg-white rounded-2xl border border-orange-200 p-4 shadow-xs space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="text-2xl">🏍️</span>
+                                    <div>
+                                        <p id="t-bike-tier-name" class="text-xs font-extrabold text-slate-900">Thipaw Bike Taxi</p>
+                                        <p id="bike-zone-label" class="text-[11px] text-slate-500">Town Base Zone</p>
+                                    </div>
+                                </div>
+                                <span id="bike-fare-display" class="text-base font-extrabold text-[#FF5722]">3,500 Ks</span>
+                            </div>
+
+                            <button type="submit" id="t-book-bike-btn"
+                                class="w-full py-3.5 px-5 bg-gradient-to-r from-[#FF5722] to-[#FF6D00] hover:opacity-95 active:scale-[0.99] text-white font-extrabold rounded-xl shadow-md shadow-orange-500/20 transition text-sm">
+                                Confirm Bike Taxi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- ------------------------------------------------------- -->
+                <!-- SERVICE C: SHOP CHANNEL OWNER MANAGER                   -->
+                <!-- ------------------------------------------------------- -->
+                <div id="view-shop-manager" class="hidden fade-in">
+                    <div class="bg-[#FF5722] text-white px-5 py-4 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+                        <div class="flex items-center gap-3">
+                            <button onclick="switchBottomTab('home')" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-bold transition">
+                                ←
+                            </button>
+                            <div>
+                                <h1 class="text-base font-extrabold">🏪 Shop Channel Manager</h1>
+                                <p class="text-[11px] text-orange-100">Manage your shop storefront & menu items</p>
+                            </div>
+                        </div>
+                        <button onclick="openNewShopForm()"
+                            class="px-3 py-1.5 rounded-xl bg-white text-[#FF5722] font-extrabold text-xs shadow-2xs active:scale-95 transition">
+                            + New Shop
+                        </button>
+                    </div>
+
+                    <div class="p-5 space-y-5">
+                        <form id="shop-setup-form" onsubmit="saveShopChannel(event)" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3.5">
+                            <h2 class="text-sm font-extrabold text-slate-900">🏪 Register New Shop</h2>
+
+                            <div class="flex items-center gap-3">
+                                <label for="shop-photo-input" class="cursor-pointer shrink-0">
+                                    <div id="shop-photo-preview" class="w-16 h-16 rounded-2xl bg-orange-50 border-2 border-dashed border-[#FF5722] flex flex-col items-center justify-center overflow-hidden text-[#FF5722]">
+                                        <span class="text-xl">📷</span>
+                                        <span class="text-[9px] font-bold">Photo</span>
+                                    </div>
+                                </label>
+                                <input type="file" id="shop-photo-input" accept="image/*" class="hidden" onchange="previewShopPhoto(event)">
+                                <div class="flex-1 space-y-2">
+                                    <input type="text" id="shop-name-input" required placeholder="Shop Name"
+                                        class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-900 outline-none focus:border-[#FF5722]">
+                                    <input type="tel" id="shop-phone-input" required placeholder="Shop Phone (09xxxxxxxxx)"
+                                        class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-900 outline-none focus:border-[#FF5722]">
+                                </div>
+                            </div>
+
+                            <input type="text" id="shop-address-input" required placeholder="Shop Address in Hsipaw"
+                                class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-[#FF5722]">
+
+                            <button type="submit"
+                                class="w-full py-3 rounded-xl bg-[#FF5722] hover:bg-[#E64A19] text-white font-extrabold text-xs shadow-sm transition">
+                                Save Shop Channel
+                            </button>
+                        </form>
+
+                        <div id="shop-manager-list" class="space-y-4"></div>
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------------------- -->
+                <!-- TAB 2: ACTIVITY SCREEN (ORDER HISTORY, CANCEL & CHAT)   -->
+                <!-- ------------------------------------------------------- -->
+                <div id="view-activity" class="hidden fade-in">
+                    <div class="bg-[#FF5722] text-white px-5 py-5 sticky top-0 z-20 shadow-xs">
+                        <h1 id="t-activity-header" class="text-lg font-extrabold">📋 Order Activity</h1>
+                        <p id="t-activity-sub" class="text-xs text-orange-100 mt-0.5">Track status, cancel before pickup, or chat with your rider</p>
+                    </div>
+
+                    <div id="user-activity-list" class="p-5 space-y-4"></div>
+                </div>
+
+                <!-- ------------------------------------------------------- -->
+                <!-- TAB 3: GOOGLE MAPS SATELLITE SCREEN                     -->
+                <!-- ------------------------------------------------------- -->
+                <div id="view-map" class="hidden fade-in">
+                    <div class="bg-[#FF5722] text-white px-5 py-4 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+                        <div>
+                            <h1 class="text-base font-extrabold">🛰️ Satellite Map</h1>
+                            <p class="text-[11px] text-orange-100">Hsipaw Live Satellite View</p>
+                        </div>
+
+                        <div class="flex bg-black/25 p-1 rounded-xl border border-white/20 text-[11px] font-bold">
+                            <button type="button" id="btn-map-sat" onclick="setMainGoogleMapType('k')"
+                                class="px-2.5 py-1 rounded-lg bg-white text-[#FF5722] shadow-2xs transition">
+                                Satellite
+                            </button>
+                            <button type="button" id="btn-map-std" onclick="setMainGoogleMapType('m')"
+                                class="px-2.5 py-1 rounded-lg text-white hover:bg-white/10 transition">
+                                Map
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-4 space-y-3.5">
+                        <div class="w-full h-[390px] rounded-2xl overflow-hidden border-2 border-orange-200 shadow-sm bg-slate-900 relative">
+                            <iframe id="main-google-map-iframe"
+                                src="https://maps.google.com/maps?q=22.6238,97.3005&t=k&z=16&output=embed"
+                                class="w-full h-full border-0"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
+                            <span>Coordinates:</span>
+                            <span id="main-map-coords" class="font-mono font-bold text-slate-900">22.6238, 97.3005</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="button" onclick="locateUserOnGoogleSatelliteMap()"
+                                class="py-3.5 px-3 rounded-xl bg-orange-100 hover:bg-orange-200 text-[#FF5722] font-bold text-xs transition flex items-center justify-center gap-1.5">
+                                <span>📍</span>
+                                <span>Locate Me</span>
+                            </button>
+
+                            <a id="main-map-gmaps-link" href="https://maps.google.com/maps?q=22.6238,97.3005&t=k" target="_blank" rel="noopener noreferrer"
+                                class="py-3.5 px-3 rounded-xl bg-[#FF5722] hover:bg-[#E64A19] text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-2xs">
+                                <span>🛰️</span>
+                                <span>Open Google Maps</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------------------- -->
+                <!-- TAB 4: PROFILE, SETTINGS, PERMISSIONS & ABOUT APP       -->
+                <!-- ------------------------------------------------------- -->
+                <div id="view-account" class="hidden fade-in">
+                    <div class="bg-gradient-to-b from-[#FF5722] to-[#FF6D00] text-white px-5 pt-8 pb-12 text-center">
+                        <img id="account-avatar" src="" alt="Avatar" class="w-24 h-24 rounded-full object-cover border-4 border-white mx-auto shadow-md bg-orange-100">
+                        <h2 id="account-name" class="text-xl font-extrabold mt-3">User</h2>
+                        <p id="account-phone" class="text-sm text-orange-100 mt-0.5">09xxxxxxxxx</p>
+                        <p id="account-address" class="text-xs text-orange-100/90 mt-0.5">Hsipaw</p>
+                    </div>
+
+                    <div class="px-5 -mt-6 space-y-4">
+                        <!-- Settings Card (Language + App Permissions) -->
+                        <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs space-y-3.5">
+                            <h3 id="t-settings-heading" class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Settings & Permissions</h3>
+
+                            <!-- Language Selector -->
+                            <div class="flex items-center justify-between py-1">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="text-lg">🌐</span>
+                                    <div>
+                                        <p id="t-lang-setting-lbl" class="text-xs font-extrabold text-slate-900">App Language</p>
+                                        <p class="text-[10px] text-slate-500">English / မြန်မာ</p>
+                                    </div>
+                                </div>
+                                <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
+                                    <button type="button" onclick="setAppLanguage('en')" id="set-lang-en" class="px-3 py-1 rounded-lg bg-[#FF5722] text-white">English</button>
+                                    <button type="button" onclick="setAppLanguage('my')" id="set-lang-my" class="px-3 py-1 rounded-lg text-slate-600">မြန်မာ</button>
+                                </div>
+                            </div>
+
+                            <!-- Device Permissions Panel (Location, Camera, Sound Notifications) -->
+                            <div class="pt-2 border-t border-slate-100 space-y-2.5">
+                                <div class="flex items-center justify-between">
+                                    <p id="t-perm-title" class="text-xs font-extrabold text-slate-900">Device Permissions</p>
+                                    <button type="button" onclick="requestAllAppPermissions()" id="t-grant-all-perm"
+                                        class="text-[11px] font-extrabold text-[#FF5722] hover:underline">
+                                        Enable All
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-2 text-center text-[11px]">
+                                    <button type="button" onclick="requestLocationPermission()" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-orange-300">
+                                        <span class="block text-base">📍</span>
+                                        <span class="font-bold text-slate-800 block mt-0.5">Location</span>
+                                        <span id="perm-loc-status" class="text-[10px] font-bold text-amber-600">Tap to Allow</span>
+                                    </button>
+                                    <button type="button" onclick="requestCameraPermission()" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-orange-300">
+                                        <span class="block text-base">📷</span>
+                                        <span class="font-bold text-slate-800 block mt-0.5">Camera</span>
+                                        <span id="perm-cam-status" class="text-[10px] font-bold text-amber-600">Tap to Allow</span>
+                                    </button>
+                                    <button type="button" onclick="requestNotificationPermission()" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-orange-300">
+                                        <span class="block text-base">🔔</span>
+                                        <span class="font-bold text-slate-800 block mt-0.5">Alerts</span>
+                                        <span id="perm-noti-status" class="text-[10px] font-bold text-amber-600">Tap to Allow</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Account & Portals Card -->
+                        <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs space-y-2.5">
+                            <button onclick="openEditProfile()"
+                                class="w-full py-3 px-4 rounded-xl bg-orange-50 hover:bg-orange-100 text-[#FF5722] font-bold text-xs flex items-center justify-between transition">
+                                <span id="t-acc-edit">✏️ Edit Profile & Live Photo</span>
+                                <span>→</span>
+                            </button>
+
+                            <button onclick="openShopPortal()"
+                                class="w-full py-3 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs flex items-center justify-between transition">
+                                <span id="t-acc-shop">🏪 Open / Manage Shop Channel</span>
+                                <span>→</span>
+                            </button>
+
+                            <button onclick="openRiderPortalGate()"
+                                class="w-full py-3 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-between transition">
+                                <span id="t-acc-rider">🛵 Rider Dispatch Portal</span>
+                                <span>→</span>
+                            </button>
+
+                            <button onclick="openAboutModal()"
+                                class="w-full py-3 px-4 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 font-bold text-xs flex items-center justify-between transition">
+                                <span id="t-acc-about">ℹ️ About App & Terms of Service</span>
+                                <span>→</span>
+                            </button>
+
+                            <button onclick="openPinModal()"
+                                class="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-between transition">
+                                <span id="t-acc-admin">🔒 Admin Control Panel</span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Fixed Bottom Navigation Bar (4 Tabs) -->
+            <nav class="bg-white border-t border-slate-200 px-3 py-2.5 flex items-center justify-around shrink-0 z-30 shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
+                <button onclick="switchBottomTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-[#FF5722] font-bold transition min-w-[60px]">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"/>
+                        <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"/>
+                    </svg>
+                    <span id="t-nav-home" class="text-[10px]">Home</span>
+                </button>
+
+                <button onclick="switchBottomTab('activity')" id="nav-activity" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 font-semibold transition relative min-w-[60px]">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                    </svg>
+                    <span id="t-nav-activity" class="text-[10px]">Activity</span>
+                    <span id="nav-unread-dot" class="hidden absolute top-0 right-3 w-2.5 h-2.5 rounded-full bg-[#FF5722] ring-2 ring-white"></span>
+                </button>
+
+                <button onclick="switchBottomTab('map')" id="nav-map" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 font-semibold transition min-w-[60px]">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                    </svg>
+                    <span id="t-nav-map" class="text-[10px]">Map</span>
+                </button>
+
+                <button onclick="switchBottomTab('account')" id="nav-account" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 font-semibold transition min-w-[60px]">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    <span id="t-nav-account" class="text-[10px]">Profile</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 3. RIDER / STAFF DISPATCH PORTAL (WITH ADMIN APPROVAL)    -->
+        <!-- ========================================================= -->
+        <div id="rider-screen" class="hidden flex-1 flex flex-col bg-[#F1F5F9] overflow-hidden fade-in">
+            <header class="bg-emerald-900 text-white px-5 py-4 flex items-center justify-between shrink-0 shadow-md">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">🛵</span>
+                        <h1 class="text-base font-extrabold">Rider Dispatch</h1>
+                    </div>
+                    <p id="rider-header-sub" class="text-[11px] text-emerald-200 mt-0.5">Staff Portal</p>
+                </div>
+                <button onclick="exitRiderPortal()"
+                    class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition">
+                    Exit
+                </button>
+            </header>
+
+            <!-- Step A: Staff Registration (After entering Staff PIN once) -->
+            <div id="rider-register-box" class="hidden p-5 flex-1 flex flex-col justify-center">
+                <form onsubmit="submitRiderApplication(event)" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="text-center">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl mx-auto mb-2">🛵</div>
+                        <h2 class="text-base font-extrabold text-slate-900">Rider Registration</h2>
+                        <p class="text-xs text-slate-500 mt-1">Enter your name and phone number. Admin must approve your account before you can claim orders.</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Rider Full Name</label>
+                        <input type="text" id="rider-app-name" required placeholder="e.g., Maung Maung"
+                            class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm outline-none focus:border-emerald-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Phone Number</label>
+                        <input type="tel" id="rider-app-phone" required placeholder="09xxxxxxxxx"
+                            class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm outline-none focus:border-emerald-600">
+                    </div>
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm">
+                        Request Admin Approval
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step B: Pending Admin Approval Waiting Screen -->
+            <div id="rider-pending-box" class="hidden p-6 flex-1 flex flex-col items-center justify-center text-center space-y-3">
+                <div class="w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-3xl animate-pulse">⏳</div>
+                <h2 class="text-base font-extrabold text-slate-900">Waiting for Admin Approval</h2>
+                <p class="text-xs text-slate-500 max-w-xs">Your rider request has been sent to the Admin. Once approved, your order board will unlock automatically.</p>
+                <button onclick="checkRiderApprovalStatus()" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">
+                    Refresh Status
+                </button>
+            </div>
+
+            <!-- Step C: Approved Rider Active Order Board -->
+            <div id="rider-board-box" class="hidden flex-1 overflow-y-auto p-4 space-y-4 pb-10">
+                <!-- My Active Claimed Order -->
+                <div id="rider-my-active-wrap" class="space-y-2"></div>
+
+                <!-- Available Unclaimed Orders Pool -->
+                <div class="space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Available Orders Pool</h2>
+                        <span id="rider-pool-count" class="text-xs font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="rider-available-list" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 4. ADMIN CONTROL PANEL (ORDERS, STAFF, RATES, RULES)      -->
+        <!-- ========================================================= -->
+        <div id="admin-screen" class="hidden flex-1 flex flex-col bg-[#F1F5F9] overflow-hidden fade-in">
+            <header class="bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between shrink-0 shadow-md">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <img src="https://i.ibb.co/B5NfCWH9/1794811370987.jpg" alt="TD" class="w-6 h-6 rounded-md bg-white object-contain">
+                        <h1 class="text-base font-extrabold">Admin Control Panel</h1>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Live Dispatch, Staff Approvals & Pricing</p>
+                </div>
+                <button onclick="exitAdmin()"
+                    class="px-3.5 py-2 rounded-xl bg-[#FF5722] hover:bg-[#E64A19] text-white text-xs font-bold transition">
+                    Exit
+                </button>
+            </header>
+
+            <!-- Admin Sub-Tabs -->
+            <div class="bg-white border-b border-slate-200 px-3 py-2 flex gap-1.5 overflow-x-auto no-scrollbar shrink-0 text-xs font-extrabold">
+                <button onclick="switchAdminTab('orders')" id="adm-tab-orders" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white whitespace-nowrap">
+                    📦 Live Orders (<span id="admin-count">0</span>)
+                </button>
+                <button onclick="switchAdminTab('staff')" id="adm-tab-staff" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 whitespace-nowrap">
+                    🛵 Riders (<span id="admin-staff-pending-badge">0</span>)
+                </button>
+                <button onclick="switchAdminTab('rates')" id="adm-tab-rates" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 whitespace-nowrap">
+                    💵 Rates & Rules
+                </button>
+            </div>
+
+            <!-- Admin Tab 1: Live Orders & Rider Tracking -->
+            <div id="admin-view-orders" class="flex-1 overflow-y-auto p-4 space-y-4 pb-10">
+                <div id="admin-orders-container" class="space-y-4"></div>
+            </div>
+
+            <!-- Admin Tab 2: Staff / Rider Approval & Management -->
+            <div id="admin-view-staff" class="hidden flex-1 overflow-y-auto p-4 space-y-4 pb-10">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 space-y-2">
+                    <h3 class="text-xs font-extrabold text-slate-900">Rider Access Security</h3>
+                    <p class="text-[11px] text-slate-500">Riders must enter the private Staff PIN and then receive your manual approval here before they can view or accept any orders.</p>
+                </div>
+                <div id="admin-staff-list" class="space-y-3"></div>
+            </div>
+
+            <!-- Admin Tab 3: Edit Delivery Rates & Terms Rules -->
+            <div id="admin-view-rates" class="hidden flex-1 overflow-y-auto p-4 space-y-4 pb-10">
+                <form onsubmit="saveAdminRates(event)" class="bg-white p-4 rounded-2xl border border-slate-200 space-y-3.5">
+                    <h3 class="text-sm font-extrabold text-slate-900">💵 Edit Delivery & Bike Taxi Rates (Ks)</h3>
+                    <p class="text-[11px] text-slate-500">Adjust delivery fees anytime fuel prices change. Updates apply immediately across the entire app.</p>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Town Base Rate (Ks)</label>
+                            <input type="number" id="cfg-rate-base" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Nearby Wards (Ks)</label>
+                            <input type="number" id="cfg-rate-mid" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Far Zone / Bawgyo (Ks)</label>
+                            <input type="number" id="cfg-rate-far" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Extra Shop Stop (+Ks)</label>
+                            <input type="number" id="cfg-rate-stop" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-bold">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 rounded-xl bg-[#FF5722] text-white font-extrabold text-xs">
+                        Save New Rates
+                    </button>
+                </form>
+
+                <form onsubmit="saveAdminRules(event)" class="bg-white p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <h3 class="text-sm font-extrabold text-slate-900">📋 Edit Terms & Conditions</h3>
+                    <p class="text-[11px] text-slate-500">Each line below appears as a rule on the Terms & About screens.</p>
+                    <textarea id="cfg-rules-textarea" rows="5" class="w-full rounded-xl border border-slate-300 p-3 text-xs leading-relaxed"></textarea>
+                    <button type="submit" class="w-full py-3 rounded-xl bg-slate-900 text-white font-extrabold text-xs">
+                        Update Terms & Rules
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 5. GOOGLE MAPS SATELLITE PICKER MODAL (FOR BIKE TAXI)      -->
+        <!-- ========================================================= -->
+        <div id="gmap-picker-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+            <div class="bg-white rounded-3xl max-w-[440px] w-full overflow-hidden shadow-2xl flex flex-col fade-in">
+                <div class="bg-[#FF5722] text-white px-5 py-3.5 flex items-center justify-between">
+                    <div>
+                        <h3 id="gmap-picker-title" class="text-sm font-extrabold">🛰️ Choose on Satellite Map</h3>
+                        <p class="text-[11px] text-orange-100">Select a landmark or use live GPS in Hsipaw</p>
+                    </div>
+                    <button onclick="closeGoogleMapPicker()" class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold">✕</button>
+                </div>
+
+                <div class="w-full h-[290px] relative bg-slate-900">
+                    <iframe id="picker-google-map-iframe"
+                        src="https://maps.google.com/maps?q=22.6238,97.3005&t=k&z=16&output=embed"
+                        class="w-full h-full border-0"
+                        loading="lazy">
+                    </iframe>
+                </div>
+
+                <div class="p-4 bg-white space-y-3">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 mb-1.5">Quick Hsipaw Landmarks:</p>
+                        <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                            <button type="button" onclick="selectHsipawLandmark(22.6238, 97.3005, 'Hsipaw Central Market')"
+                                class="px-2.5 py-1.5 rounded-lg bg-orange-50 border border-orange-200 text-[#FF5722] font-bold text-[11px] whitespace-nowrap">
+                                📍 Central Market
+                            </button>
+                            <button type="button" onclick="selectHsipawLandmark(22.6295, 97.2950, 'Hsipaw Haw Palace / North Ward')"
+                                class="px-2.5 py-1.5 rounded-lg bg-orange-50 border border-orange-200 text-[#FF5722] font-bold text-[11px] whitespace-nowrap">
+                                📍 Haw Palace
+                            </button>
+                            <button type="button" onclick="selectHsipawLandmark(22.6170, 97.3110, 'Dokhtawaddy Bridge')"
+                                class="px-2.5 py-1.5 rounded-lg bg-orange-50 border border-orange-200 text-[#FF5722] font-bold text-[11px] whitespace-nowrap">
+                                📍 Bridge Gate
+                            </button>
+                            <button type="button" onclick="selectHsipawLandmark(22.6580, 97.2650, 'Bawgyo Pagoda')"
+                                class="px-2.5 py-1.5 rounded-lg bg-orange-50 border border-orange-200 text-[#FF5722] font-bold text-[11px] whitespace-nowrap">
+                                📍 Bawgyo Pagoda
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                        <button type="button" onclick="useLiveGpsInPicker()" class="text-[#FF5722] font-extrabold flex items-center gap-1">
+                            <span>🎯</span>
+                            <span>Use Live GPS</span>
+                        </button>
+                        <span id="picker-coords-display" class="font-mono font-bold text-slate-900">22.6238, 97.3005</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button type="button" onclick="closeGoogleMapPicker()"
+                            class="py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+                            Cancel
+                        </button>
+                        <button type="button" onclick="confirmGoogleMapPickerSelection()"
+                            class="py-3 rounded-xl bg-[#FF5722] hover:bg-[#E64A19] text-white font-extrabold text-xs transition shadow-sm">
+                            Confirm Location
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 6. ABOUT APP & TERMS MODAL                                -->
+        <!-- ========================================================= -->
+        <div id="about-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+            <div class="bg-white rounded-3xl max-w-[430px] w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl space-y-4 fade-in">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <img src="https://i.ibb.co/B5NfCWH9/1794811370987.jpg" alt="TD" class="w-10 h-10 rounded-xl border border-slate-200">
+                        <div>
+                            <h3 class="text-base font-extrabold text-slate-900">About Thipaw Delivery</h3>
+                            <p class="text-[11px] text-slate-500">Version 2.0 • Hsipaw Local Super-App</p>
+                        </div>
+                    </div>
+                    <button onclick="closeAboutModal()" class="w-8 h-8 rounded-full bg-slate-100 font-bold text-slate-600">✕</button>
+                </div>
+
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Thipaw Delivery connects residents, local restaurants, and verified motorbike riders across Hsipaw Township for fast food delivery, custom shopping errands, and safe bike taxi rides.
+                </p>
+
+                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+                    <h4 class="text-xs font-extrabold text-slate-900">📋 Service Terms & Rules</h4>
+                    <ul id="about-rules-list" class="space-y-1.5 list-disc pl-4 text-[11px] text-slate-700 leading-relaxed"></ul>
+                </div>
+
+                <button onclick="closeAboutModal()" class="w-full py-3 rounded-xl bg-[#FF5722] text-white font-extrabold text-xs">
+                    Close
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 7. TWO-WAY LIVE CHAT BOX MODAL                            -->
+        <!-- ========================================================= -->
+        <div id="chat-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden items-end sm:items-center justify-center sm:p-4">
+            <div class="bg-[#F8FAFC] w-full max-w-[460px] h-[88vh] sm:h-[640px] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden fade-in">
+                
+                <div class="bg-gradient-to-r from-[#FF5722] to-[#FF6D00] text-white px-4 py-3.5 flex items-center justify-between shrink-0 shadow-xs">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <button onclick="closeChatModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-bold shrink-0">
+                            ←
+                        </button>
+                        <div class="min-w-0">
+                            <h3 id="chat-header-title" class="text-sm font-extrabold truncate">💬 Live Order Chat</h3>
+                            <p id="chat-header-subtitle" class="text-[11px] text-orange-100 truncate">Direct message regarding your order</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="chat-order-summary" class="bg-orange-50 border-b border-orange-200/80 px-4 py-2 text-[11px] text-slate-700 flex items-center justify-between shrink-0"></div>
+
+                <div id="chat-messages-feed" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+
+                <div class="bg-white border-t border-slate-100 px-3 pt-2.5 pb-1.5 shrink-0">
+                    <p class="text-[10px] font-bold text-slate-400 mb-1.5 px-1">Quick Replies:</p>
+                    <div id="chat-quick-replies" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
+                </div>
+
+                <form onsubmit="sendChatMessage(event)" class="bg-white border-t border-slate-200 p-3 flex items-center gap-2 shrink-0">
+                    <input type="text" id="chat-text-input" placeholder="Type a message..."
+                        class="flex-1 rounded-full bg-slate-100 border border-slate-200 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#FF5722] outline-none transition">
+                    <button type="submit"
+                        class="w-10 h-10 rounded-full bg-[#FF5722] hover:bg-[#E64A19] active:scale-95 text-white flex items-center justify-center shadow-sm shrink-0 transition">
+                        <svg class="w-5 h-5 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z"/>
+                        </svg>
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 8. DISCREET PIN MODALS (NO PASSWORDS DISPLAYED IN UI)     -->
+        <!-- ========================================================= -->
+        <!-- Admin PIN Modal -->
+        <div id="pin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-5">
+            <div class="bg-white rounded-3xl max-w-xs w-full p-6 text-center shadow-2xl space-y-4 fade-in">
+                <div class="w-12 h-12 bg-orange-100 text-[#FF5722] rounded-2xl flex items-center justify-center text-xl mx-auto">🔒</div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Admin Access</h3>
+                    <p class="text-xs text-slate-500 mt-1">Enter your 4-digit security PIN</p>
+                </div>
+                <input type="password" id="pin-input" maxlength="4" inputmode="numeric" placeholder="••••"
+                    onkeyup="if(event.key === 'Enter') verifyPin()"
+                    class="w-full text-center tracking-[0.5em] text-xl font-extrabold rounded-xl border border-slate-300 py-3 focus:border-[#FF5722] outline-none">
+                <p id="pin-error" class="hidden text-xs font-bold text-red-600">Invalid Admin PIN</p>
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <button onclick="closePinModal()" class="py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs">Cancel</button>
+                    <button onclick="verifyPin()" class="py-2.5 rounded-xl bg-[#FF5722] text-white font-bold text-xs">Unlock</button>
+                  </div>
+                    </div>
+        </div>
+
+        <!-- Rider Staff PIN Modal -->
+        <div id="rider-pin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-5">
+            <div class="bg-white rounded-3xl max-w-xs w-full p-6 text-center shadow-2xl space-y-4 fade-in">
+                <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center text-2xl mx-auto">🛵</div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Rider Staff Access</h3>
+                    <p class="text-xs text-slate-500 mt-1">Enter Staff PIN once to register or access dispatch</p>
+                </div>
+                <input type="password" id="rider-pin-input" maxlength="4" inputmode="numeric" placeholder="••••"
+                    onkeyup="if(event.key === 'Enter') verifyRiderPin()"
+                    class="w-full text-center tracking-[0.5em] text-xl font-extrabold rounded-xl border border-slate-300 py-3 focus:border-emerald-600 outline-none">
+                <p id="rider-pin-error" class="hidden text-xs font-bold text-red-600">Invalid Staff PIN</p>
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <button onclick="closeRiderPinModal()" class="py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs">Cancel</button>
+                    <button onclick="verifyRiderPin()" class="py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop Merchant PIN Modal -->
+        <div id="shop-pass-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-5">
+            <div class="bg-white rounded-3xl max-w-xs w-full p-6 text-center shadow-2xl space-y-4 fade-in">
+                <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center text-2xl mx-auto">🏪</div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Merchant Portal</h3>
+                    <p class="text-xs text-slate-500 mt-1">Enter your Shop Access PIN</p>
+                </div>
+                <input type="password" id="shop-pass-input" maxlength="4" inputmode="numeric" placeholder="••••"
+                    onkeyup="if(event.key === 'Enter') verifyShopPassword()"
+                    class="w-full text-center tracking-[0.5em] text-xl font-extrabold rounded-xl border border-slate-300 py-3 focus:border-[#FF5722] outline-none">
+                <p id="shop-pass-error" class="hidden text-xs font-bold text-red-600">Invalid Merchant PIN</p>
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <button onclick="closeShopPassModal()" class="py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs">Cancel</button>
+                    <button onclick="verifyShopPassword()" class="py-2.5 rounded-xl bg-[#FF5722] text-white font-bold text-xs">Unlock</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-box" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-xl hidden z-50 text-center max-w-[88%]"></div>
+
+    <script>
+        // =========================================================================
+        // PRIVATE SECURITY PINS (HIDDEN FROM UI)
+        // Admin PIN: 1234 | Rider Staff PIN: 5555 | Merchant Shop PIN: 8888
+        // =========================================================================
+        const ADMIN_SECRET_PIN = "1234";
+        const RIDER_SECRET_PIN = "5555";
+        const SHOP_SECRET_PIN  = "8888";
+
+        const HSIPAW_LAT = 22.6238;
+        const HSIPAW_LNG = 97.3005;
+
+        const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+                <rect width="100" height="100" fill="#FFEDD5"/>
+                <circle cx="50" cy="38" r="18" fill="#FF5722"/>
+                <path d="M20 88C20 70 33 60 50 60C67 60 80 70 80 88" fill="#FF5722"/>
+            </svg>
+        `);
+
+        const DEFAULT_SHOP_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+                <rect width="100" height="100" fill="#FFF7ED"/>
+                <rect x="20" y="38" width="60" height="42" rx="6" fill="#FF5722"/>
+                <path d="M16 38L26 22H74L84 38H16Z" fill="#EA580C"/>
+                <rect x="42" y="54" width="16" height="26" fill="#FFEDD5"/>
+            </svg>
+        `);
+
+        // Storage Keys
+        const LANG_KEY = 'td_app_lang';
+        const TERMS_KEY = 'td_terms_accepted';
+        const USER_STORAGE_KEY = 'td_user_profile';
+        const ORDERS_STORAGE_KEY = 'td_orders_live';
+        const SHOPS_STORAGE_KEY = 'td_shops_live';
+        const RIDERS_STORAGE_KEY = 'td_riders_registry';
+        const MY_RIDER_SESSION_KEY = 'td_my_rider_session';
+        const CONFIG_STORAGE_KEY = 'td_admin_config';
+
+        // Default Admin-Editable Rates & Rules
+        const DEFAULT_CONFIG = {
+            baseRate: 3500,
+            midRate: 5000,
+            farRate: 8000,
+            extraStopRate: 1000,
+            rules: [
+                "Standard town delivery fee applies up to one motorbike load to the same drop-off address.",
+                "Food and market item costs are paid directly according to the store receipt plus delivery fee.",
+                "Orders can only be cancelled before a rider accepts and begins purchasing your items.",
+                "Accurate GPS location sharing ensures faster pickup and delivery."
+            ]
+        };
+
+        // App State
+        let currentLang = localStorage.getItem(LANG_KEY) || 'en';
+        let termsAccepted = localStorage.getItem(TERMS_KEY) === 'true';
+        let userProfile = JSON.parse(localStorage.getItem(USER_STORAGE_KEY)) || null;
+        let appConfig = JSON.parse(localStorage.getItem(CONFIG_STORAGE_KEY)) || DEFAULT_CONFIG;
+        let allShops = JSON.parse(localStorage.getItem(SHOPS_STORAGE_KEY)) || [
+            {
+                id: 'shop_1',
+                name: 'Nantaw Shan Noodle',
+                address: 'Central Ward, Bogyoke Road, Hsipaw',
+                phone: '09428111222',
+                photo: DEFAULT_SHOP_IMG,
+                items: [
+                    { id: 'm1', name: 'Shan Noodle (Sticky)', priceNum: 2500, photo: DEFAULT_SHOP_IMG },
+                    { id: 'm2', name: 'Warm Tofu & Crispy Pork', priceNum: 3000, photo: DEFAULT_SHOP_IMG }
+                ]
+            },
+            {
+                id: 'shop_2',
+                name: 'Hsipaw Tea & Snacks',
+                address: 'Market Ward, Hsipaw',
+                phone: '09798222333',
+                photo: DEFAULT_SHOP_IMG,
+                items: [
+                    { id: 'm3', name: 'Shan Tea & Fritters', priceNum: 2000, photo: DEFAULT_SHOP_IMG },
+                    { id: 'm4', name: 'Fried Rice with Egg', priceNum: 3500, photo: DEFAULT_SHOP_IMG }
+                ]
+            }
+        ];
+
+        // Clean empty order list (No sample/fake orders)
+        let allOrders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY)) || [];
+        let allRiders = JSON.parse(localStorage.getItem(RIDERS_STORAGE_KEY)) || [];
+        let myRiderSession = JSON.parse(localStorage.getItem(MY_RIDER_SESSION_KEY)) || null;
+
+        let tempAvatarUrl = null;
+        let selfieVerified = false;
+
+        // Multi-Item / Multi-Shop Food Cart
+        let foodCart = [];
+        let foodCoords = null;
+        let selectedShopId = null;
+
+        // Custom Order State
+        let customCoords = null;
+
+        // Bike Taxi State
+        let activeBikeField = 'dropoff';
+        let bikePickupCoords = null;
+        let bikeDropoffCoords = null;
+        let mainMapLat = HSIPAW_LAT;
+        let mainMapLng = HSIPAW_LNG;
+        let mainMapType = 'k';
+        let currentPickerTarget = 'dropoff';
+        let tempPickedLat = HSIPAW_LAT;
+        let tempPickedLng = HSIPAW_LNG;
+        let tempPickedLabel = '';
+
+        // Shop & Chat State
+        let tempShopPhoto = DEFAULT_SHOP_IMG;
+        let shopUnlocked = false;
+        let activeChatOrderId = null;
+        let activeChatRole = 'customer';
+        let lastKnownOrderCount = allOrders.length;
+
+        const HSIPAW_PLACES = [
+            { name: "Hsipaw Central Market", sub: "Market Ward, Hsipaw Town Center", lat: 22.6238, lng: 97.3005 },
+            { name: "Hsipaw Haw Palace", sub: "North Ward, Historic Palace Road", lat: 22.6295, lng: 97.2950 },
+            { name: "Dokhtawaddy Bridge Gate", sub: "East River Crossing, Hsipaw", lat: 22.6170, lng: 97.3110 },
+            { name: "Hsipaw Highway Bus Station", sub: "Lashio - Mandalay Main Road", lat: 22.6210, lng: 97.3045 },
+            { name: "Bawgyo Pagoda", sub: "Bawgyo Village, West Hsipaw", lat: 22.6580, lng: 97.2650 }
+        ];
+
+        // =========================================================================
+        // TRANSLATIONS (STRICT ENGLISH DEFAULT + BURMESE SWITCHER)
+        // =========================================================================
+        const I18N = {
+            en: {
+                welcomeSub: "Delivery Rates & Service Terms in Hsipaw",
+                ratesHeading: "Delivery & Bike Taxi Rates",
+                rulesHeading: "Terms & Conditions",
+                agreeBtn: "I Agree - Continue to Account Setup",
+                regSub: "Complete your verified profile to start",
+                regPhotoNote: "Take a real live selfie photo for security verification",
+                takeSelfie: "Take Selfie",
+                labelName: "Full Name",
+                labelPhone: "Phone Number",
+                labelAddr: "Home Address / Ward",
+                regSubmit: "Save & Continue",
+                cityBadge: "📍 Hsipaw",
+                riderBtn: "Rider",
+                searchPlaceholder: "Search shops or menus in Hsipaw...",
+                svcFood: "Food",
+                svcFoodSub: "Shop Menus",
+                svcCustom: "Order",
+                svcCustomSub: "Custom Buy",
+                svcBike: "Bike Taxi",
+                svcBikeSub: "Book Ride",
+                svcMap: "Satellite Map",
+                svcMapSub: "Explore Hsipaw",
+                svcShop: "Open Shop",
+                svcShopSub: "Merchant Portal",
+                homeShopsTitle: "🏪 Partner Shops on Thipaw Delivery",
+                viewAllShops: "View All →",
+                homeRateLbl: "Delivery Rates",
+                homeCallLbl: "Support Hotline",
+                homeCallBtn: "Call Direct",
+                navHome: "Home",
+                navActivity: "Activity",
+                navMap: "Map",
+                navAccount: "Profile",
+                settingsHeading: "Settings & Permissions",
+                langSettingLbl: "App Language",
+                permTitle: "Device Permissions",
+                grantAllPerm: "Enable All",
+                accEdit: "✏️ Edit Profile & Live Photo",
+                accShop: "🏪 Open / Manage Shop Channel",
+                accRider: "🛵 Rider Dispatch Portal",
+                accAbout: "ℹ️ About App & Terms of Service",
+                accAdmin: "🔒 Admin Control Panel"
+            },
+            my: {
+                welcomeSub: "သီပေါမြို့တွင်း ပို့ဆောင်ခ နှုန်းထားနှင့် စည်းကမ်းချက်များ",
+                ratesHeading: "ပို့ဆောင်ခနှင့် ဆိုင်ကယ်ကယ်ရီ နှုန်းထားများ",
+                rulesHeading: "ဝန်ဆောင်မှု စည်းကမ်းချက်များ",
+                agreeBtn: "သဘောတူပါတယ် - အကောင့်ဖွင့်မည်",
+                regSub: "အသုံးပြုသူ အကောင့်အချက်အလက် ဖြည့်သွင်းပါ",
+                regPhotoNote: "လုံခြုံရေးအတွက် ကင်မရာဖြင့် လူကိုယ်တိုင်ပုံအစစ် ရိုက်ထည့်ပါ",
+                takeSelfie: "ပုံရိုက်မည်",
+                labelName: "နာမည်အပြည့်အစုံ",
+                labelPhone: "ဖုန်းနံပါတ်",
+                labelAddr: "နေရပ်လိပ်စာ / ရပ်ကွက်",
+                regSubmit: "အကောင့်ဖောက်ပြီး အသုံးပြုမည်",
+                cityBadge: "📍 သီပေါမြို့",
+                riderBtn: "ဝန်ထမ်း",
+                searchPlaceholder: "ဆိုင်နှင့် အစားအသောက် ရှာဖွေမည်...",
+                svcFood: "Food",
+                svcFoodSub: "ဆိုင်မီနူးများ",
+                svcCustom: "မှာမည်",
+                svcCustomSub: "တခြားဝယ်ခိုင်းရန်",
+                svcBike: "Bike Taxi",
+                svcBikeSub: "ဆိုင်ကယ်ကယ်ရီ",
+                svcMap: "Satellite Map",
+                svcMapSub: "ဂြိုဟ်တုမြေပုံ",
+                svcShop: "ဆိုင်ဖွင့်မည်",
+                svcShopSub: "ဆိုင်ရှင်များ",
+                homeShopsTitle: "🏪 Thipaw Delivery ရှိ ဆိုင်များ",
+                viewAllShops: "အားလုံးကြည့်မည် →",
+                homeRateLbl: "ပို့ဆောင်ခနှုန်းထား",
+                homeCallLbl: "ဖုန်းဖြင့်မှာရန်",
+                homeCallBtn: "တိုက်ရိုက်ခေါ်မည်",
+                navHome: "ပင်မ",
+                navActivity: "မှတ်တမ်း",
+                navMap: "မြေပုံ",
+                navAccount: "ပရိုဖိုင်",
+                settingsHeading: "Settings နှင့် Permissions",
+                langSettingLbl: "ဘာသာစကား (Language)",
+                permTitle: "App Permissions များ",
+                grantAllPerm: "အားလုံးဖွင့်မည်",
+                accEdit: "✏️ ပရိုဖိုင်နှင့် ဓာတ်ပုံ ပြင်ဆင်မည်",
+                accShop: "🏪 ဆိုင် Channel ဖွင့်ရန် / စီမံရန်",
+                accRider: "🛵 ဝန်ထမ်း အော်ဒါကောက်ရန် နေရာ",
+                accAbout: "ℹ️ App အကြောင်းနှင့် စည်းမျဉ်းစည်းကမ်းများ",
+                accAdmin: "🔒 Admin စီမံခန့်ခွဲမှု နေရာ"
+            }
+        };
+
+        function setAppLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem(LANG_KEY, lang);
+            applyLanguageStrings();
+        }
+
+        function applyLanguageStrings() {
+            const t = I18N[currentLang] || I18N.en;
+            const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+            setTxt('t-welcome-sub', t.welcomeSub);
+            setTxt('t-rates-heading', `💵 ${t.ratesHeading}`);
+            setTxt('t-rules-heading', `📋 ${t.rulesHeading}`);
+            setTxt('t-agree-btn', t.agreeBtn);
+            setTxt('t-reg-sub', t.regSub);
+            setTxt('t-reg-photo-note', t.regPhotoNote);
+            setTxt('t-take-selfie', t.takeSelfie);
+            setTxt('t-label-name', t.labelName);
+            setTxt('t-label-phone', t.labelPhone);
+            setTxt('t-label-address', t.labelAddr);
+            setTxt('t-reg-submit', t.regSubmit);
+            setTxt('t-city-badge', t.cityBadge);
+            setTxt('t-rider-btn', t.riderBtn);
+            setTxt('t-search-placeholder', t.searchPlaceholder);
+            setTxt('t-svc-food', t.svcFood);
+            setTxt('t-svc-food-sub', t.svcFoodSub);
+            setTxt('t-svc-custom', t.svcCustom);
+            setTxt('t-svc-custom-sub', t.svcCustomSub);
+            setTxt('t-svc-bike', t.svcBike);
+            setTxt('t-svc-bike-sub', t.svcBikeSub);
+            setTxt('t-svc-map', t.svcMap);
+            setTxt('t-svc-map-sub', t.svcMapSub);
+            setTxt('t-svc-shop', t.svcShop);
+            setTxt('t-svc-shop-sub', t.svcShopSub);
+            setTxt('t-home-shops-title', t.homeShopsTitle);
+            setTxt('t-view-all-shops', t.viewAllShops);
+            setTxt('t-home-rate-lbl', t.homeRateLbl);
+            setTxt('t-home-call-lbl', t.homeCallLbl);
+            setTxt('t-home-call-btn', t.homeCallBtn);
+            setTxt('t-nav-home', t.navHome);
+            setTxt('t-nav-activity', t.navActivity);
+            setTxt('t-nav-map', t.navMap);
+            setTxt('t-nav-account', t.navAccount);
+            setTxt('t-settings-heading', t.settingsHeading);
+            setTxt('t-lang-setting-lbl', t.langSettingLbl);
+            setTxt('t-perm-title', t.permTitle);
+            setTxt('t-grant-all-perm', t.grantAllPerm);
+            setTxt('t-acc-edit', t.accEdit);
+            setTxt('t-acc-shop', t.accShop);
+            setTxt('t-acc-rider', t.accRider);
+            setTxt('t-acc-about', t.accAbout);
+            setTxt('t-acc-admin', t.accAdmin);
+
+            // Update toggle pill styles
+            const activeCls = "px-2.5 py-1 rounded-full bg-white text-[#FF5722]";
+            const inactiveCls = "px-2.5 py-1 rounded-full text-white";
+            document.getElementById('welcome-lang-en').className = currentLang === 'en' ? activeCls : inactiveCls;
+            document.getElementById('welcome-lang-my').className = currentLang === 'my' ? activeCls : inactiveCls;
+
+            const setAct = "px-3 py-1 rounded-lg bg-[#FF5722] text-white";
+            const setInact = "px-3 py-1 rounded-lg text-slate-600";
+            document.getElementById('set-lang-en').className = currentLang === 'en' ? setAct : setInact;
+            document.getElementById('set-lang-my').className = currentLang === 'my' ? setAct : setInact;
+
+            renderDynamicRatesAndRules();
+        }
+
+        // =========================================================================
+        // SOUND NOTIFICATION SYNTHESIZER (RINGS WHEN NEW ORDER ARRIVES)
+        // =========================================================================
+        function playNewOrderChime() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const playTone = (freq, start, dur) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+                    gain.gain.setValueAtTime(0.25, ctx.currentTime + start);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + start);
+                    osc.stop(ctx.currentTime + start + dur);
+                };
+                playTone(587.33, 0, 0.25);     // D5
+                playTone(880.00, 0.18, 0.45);  // A5
+            } catch (e) {}
+        }
+
+        function triggerOrderNotification(order) {
+            playNewOrderChime();
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("New Thipaw Delivery Order!", {
+                    body: `${order.customerName} • ${order.details}`,
+                    icon: "https://i.ibb.co/B5NfCWH9/1794811370987.jpg"
+                });
+            }
+        }
+
+        // =========================================================================
+        // DEVICE PERMISSIONS MANAGER (LOCATION, CAMERA, ALERTS)
+        // =========================================================================
+        function requestLocationPermission() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    () => {
+                        document.getElementById('perm-loc-status').textContent = "✅ Allowed";
+                        document.getElementById('perm-loc-status').className = "text-[10px] font-bold text-emerald-600";
+                        showToast("Location permission enabled");
+                    },
+                    () => {
+                        showToast("Please allow Location in Android App Settings");
+                    }
+                );
+            }
+        }
+
+        async function requestCameraPermission() {
+            try {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                    stream.getTracks().forEach(track => track.stop());
+                    document.getElementById('perm-cam-status').textContent = "✅ Allowed";
+                    document.getElementById('perm-cam-status').className = "text-[10px] font-bold text-emerald-600";
+                    showToast("Camera permission enabled");
+                }
+            } catch (err) {
+                showToast("Please allow Camera permission in device settings");
+            }
+        }
+
+        function requestNotificationPermission() {
+            playNewOrderChime();
+            if ("Notification" in window) {
+                Notification.requestPermission().then(res => {
+                    if (res === "granted") {
+                        document.getElementById('perm-noti-status').textContent = "✅ Allowed";
+                        document.getElementById('perm-noti-status').className = "text-[10px] font-bold text-emerald-600";
+                        showToast("Sound & Order Notifications enabled");
+                    }
+                });
+            } else {
+                document.getElementById('perm-noti-status').textContent = "✅ Sound On";
+                document.getElementById('perm-noti-status').className = "text-[10px] font-bold text-emerald-600";
+            }
+        }
+
+        function requestAllAppPermissions() {
+            requestLocationPermission();
+            requestCameraPermission();
+            requestNotificationPermission();
+        }
+
+        // =========================================================================
+        // STORAGE SYNC & INITIALIZATION
+        // =========================================================================
+        function saveShops() { localStorage.setItem(SHOPS_STORAGE_KEY, JSON.stringify(allShops)); }
+        function saveConfig() { localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(appConfig)); }
+        function saveRiders() { localStorage.setItem(RIDERS_STORAGE_KEY, JSON.stringify(allRiders)); }
+
+        function saveOrders() {
+            localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(allOrders));
+            if (allOrders.length > lastKnownOrderCount) {
+                triggerOrderNotification(allOrders[0]);
+            }
+            lastKnownOrderCount = allOrders.length;
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === ORDERS_STORAGE_KEY) {
+                const updated = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY)) || [];
+                if (updated.length > allOrders.length) {
+                    triggerOrderNotification(updated[0]);
+                }
+                allOrders = updated;
+                lastKnownOrderCount = allOrders.length;
+                refreshVisibleScreens();
+            } else if (e.key === SHOPS_STORAGE_KEY) {
+                allShops = JSON.parse(localStorage.getItem(SHOPS_STORAGE_KEY)) || [];
+                renderHomeShopsStrip();
+                renderFoodShopBrowser();
+            } else if (e.key === RIDERS_STORAGE_KEY) {
+                allRiders = JSON.parse(localStorage.getItem(RIDERS_STORAGE_KEY)) || [];
+                if (!document.getElementById('rider-screen').classList.contains('hidden')) {
+                    renderRiderPortalState();
+                }
+            } else if (e.key === CONFIG_STORAGE_KEY) {
+                appConfig = JSON.parse(localStorage.getItem(CONFIG_STORAGE_KEY)) || DEFAULT_CONFIG;
+                renderDynamicRatesAndRules();
+            }
+        });
+
+        function refreshVisibleScreens() {
+            renderHomeActiveOrder();
+            updateUnreadIndicators();
+            if (!document.getElementById('view-activity').classList.contains('hidden')) renderUserActivity();
+            if (!document.getElementById('admin-screen').classList.contains('hidden')) renderAdminOrders();
+            if (!document.getElementById('rider-screen').classList.contains('hidden')) renderRiderPortalState();
+            if (!document.getElementById('chat-modal').classList.contains('hidden') && activeChatOrderId) renderChatMessages();
+        }
+
+        window.onload = function() {
+            applyLanguageStrings();
+            renderGrabSuggestedPlaces();
+            if (!termsAccepted) {
+                showTermsScreen();
+            } else if (!userProfile) {
+                showRegistration();
+            } else {
+                enterMainApp();
+            }
+        };
+
+        function showToast(msg) {
+            const box = document.getElementById('toast-box');
+            box.textContent = msg;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 2800);
+        }
+
+        // =========================================================================
+        // 0. DYNAMIC RATES & TERMS RENDERING
+        // =========================================================================
+        function renderDynamicRatesAndRules() {
+            const ratesList = document.getElementById('dynamic-rates-list');
+            if (ratesList) {
+                ratesList.innerHTML = `
+                    <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-orange-100">
+                        <div>
+                            <p class="font-bold text-slate-800">Town Short Distance</p>
+                            <p class="text-[11px] text-slate-500">Market, Central, Old Town, South Ward</p>
+                        </div>
+                        <span class="font-extrabold text-[#FF5722] text-sm">${Number(appConfig.baseRate).toLocaleString()} Ks</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-orange-100">
+                        <div>
+                            <p class="font-bold text-slate-800">Nearby Surrounding Wards</p>
+                            <p class="text-[11px] text-slate-500">Bridge Gate, Narmakhaw, North Ward</p>
+                        </div>
+                        <span class="font-extrabold text-[#FF5722] text-sm">${Number(appConfig.midRate).toLocaleString()} Ks</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-orange-100">
+                        <div>
+                            <p class="font-bold text-slate-800">Outer Zone / Bawgyo</p>
+                            <p class="text-[11px] text-slate-500">Bawgyo Pagoda, Tonsint</p>
+                        </div>
+                        <span class="font-extrabold text-[#FF5722] text-sm">${Number(appConfig.farRate).toLocaleString()} Ks</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-amber-50 p-2.5 rounded-xl border border-amber-200">
+                        <div>
+                            <p class="font-bold text-amber-950">Multi-Shop Pickup Surcharge</p>
+                            <p class="text-[11px] text-amber-800">Per additional shop stop in one order</p>
+                        </div>
+                        <span class="font-extrabold text-amber-800 text-sm">+${Number(appConfig.extraStopRate).toLocaleString()} Ks</span>
+                    </div>
+                `;
+            }
+
+            const startingBadge = document.getElementById('home-starting-rate');
+            if (startingBadge) startingBadge.textContent = `From ${Number(appConfig.baseRate).toLocaleString()} Ks`;
+
+            const rulesHtml = (appConfig.rules || []).map(r => `<li>${escapeHtml(r)}</li>`).join('');
+            const dRules = document.getElementById('dynamic-rules-list');
+            const aRules = document.getElementById('about-rules-list');
+            if (dRules) dRules.innerHTML = rulesHtml;
+            if (aRules) aRules.innerHTML = rulesHtml;
+        }
+
+        function showTermsScreen() {
+            renderDynamicRatesAndRules();
+            document.getElementById('terms-screen').classList.remove('hidden');
+            document.getElementById('register-screen').classList.add('hidden');
+            document.getElementById('main-app-shell').classList.add('hidden');
+            document.getElementById('admin-screen').classList.add('hidden');
+            document.getElementById('rider-screen').classList.add('hidden');
+        }
+
+        function acceptTermsAndProceed() {
+            termsAccepted = true;
+            localStorage.setItem(TERMS_KEY, 'true');
+            requestLocationPermission();
+            if (userProfile) enterMainApp();
+            else showRegistration();
+        }
+
+        function openAboutModal() {
+            renderDynamicRatesAndRules();
+            const m = document.getElementById('about-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+        function closeAboutModal() {
+            const m = document.getElementById('about-modal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        // =========================================================================
+        // 1. LIVE CAMERA SELFIE & ACCOUNT REGISTRATION
+        // =========================================================================
+        function triggerLiveSelfieCapture() {
+            document.getElementById('reg-photo').click();
+        }
+
+        function processVerifiedSelfie(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Compress image via Canvas so localStorage never overflows on mobile
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 320;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > h) { if (w > maxDim) { h *= maxDim / w; w = maxDim; } }
+                    else { if (h > maxDim) { w *= maxDim / h; h = maxDim; } }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+
+                    tempAvatarUrl = canvas.toDataURL('image/jpeg', 0.82);
+                    selfieVerified = true;
+                    document.getElementById('avatar-preview-box').innerHTML =
+                        `<img src="${tempAvatarUrl}" alt="Verified Selfie" class="w-full h-full object-cover">`;
+                    document.getElementById('selfie-verified-tag').classList.remove('hidden');
+                    showToast("Live selfie photo verified!");
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
+            const address = document.getElementById('reg-address').value.trim();
+
+            if (!tempAvatarUrl || !selfieVerified) {
+                showToast("Please tap 'Take Selfie' to capture a real live camera photo first");
+                triggerLiveSelfieCapture();
+                return;
+            }
+            if (!name || !phone || !address) return;
+
+            userProfile = {
+                name: name,
+                phone: phone,
+                address: address,
+                photo: tempAvatarUrl
+            };
+            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userProfile));
+            enterMainApp();
+            showToast("Account created successfully!");
+        }
+
+        function showRegistration() {
+            document.getElementById('terms-screen').classList.add('hidden');
+            document.getElementById('register-screen').classList.remove('hidden');
+            document.getElementById('main-app-shell').classList.add('hidden');
+            document.getElementById('admin-screen').classList.add('hidden');
+            document.getElementById('rider-screen').classList.add('hidden');
+        }
+
+        function openEditProfile() {
+            if (!userProfile) return;
+            document.getElementById('reg-title').textContent = "Edit Profile";
+            document.getElementById('reg-name').value = userProfile.name;
+            document.getElementById('reg-phone').value = userProfile.phone;
+            document.getElementById('reg-address').value = userProfile.address || "";
+            if (userProfile.photo) {
+                tempAvatarUrl = userProfile.photo;
+                selfieVerified = true;
+                document.getElementById('avatar-preview-box').innerHTML =
+                    `<img src="${tempAvatarUrl}" alt="Profile" class="w-full h-full object-cover">`;
+                document.getElementById('selfie-verified-tag').classList.remove('hidden');
+            }
+            showRegistration();
+        }
+
+        function enterMainApp() {
+            document.getElementById('terms-screen').classList.add('hidden');
+            document.getElementById('register-screen').classList.add('hidden');
+            document.getElementById('admin-screen').classList.add('hidden');
+            document.getElementById('rider-screen').classList.add('hidden');
+            document.getElementById('main-app-shell').classList.remove('hidden');
+
+            const avatar = userProfile.photo || DEFAULT_AVATAR;
+            document.getElementById('home-user-avatar').src = avatar;
+            document.getElementById('account-avatar').src = avatar;
+            document.getElementById('account-name').textContent = userProfile.name;
+            document.getElementById('account-phone').textContent = userProfile.phone;
+            document.getElementById('account-address').textContent = `📍 ${userProfile.address || 'Hsipaw'}`;
+
+            // Pre-fill saved home address into delivery fields
+            if (userProfile.address) {
+                const fAddr = document.getElementById('food-address');
+                const cAddr = document.getElementById('custom-address');
+                if (fAddr && !fAddr.value) fAddr.value = userProfile.address;
+                if (cAddr && !cAddr.value) cAddr.value = userProfile.address;
+            }
+
+            renderHomeShopsStrip();
+            renderHomeActiveOrder();
+            updateUnreadIndicators();
+            switchBottomTab('home');
+        }
+
+        // =========================================================================
+        // 2. NAVIGATION & HOME SCREEN
+        // =========================================================================
+        function hideAllViews() {
+            ['view-home', 'view-food', 'view-custom', 'view-bike', 'view-shop-manager', 'view-activity', 'view-map', 'view-account'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
+
+        function switchBottomTab(tab) {
+            hideAllViews();
+            document.getElementById('main-scroll-area').scrollTop = 0;
+
+            ['nav-home', 'nav-activity', 'nav-map', 'nav-account'].forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.remove('text-[#FF5722]', 'font-bold');
+                el.classList.add('text-slate-400', 'font-semibold');
+            });
+
+            if (tab === 'home') {
+                document.getElementById('view-home').classList.remove('hidden');
+                highlightNav('nav-home');
+                renderHomeShopsStrip();
+                renderHomeActiveOrder();
+            } else if (tab === 'activity') {
+                document.getElementById('view-activity').classList.remove('hidden');
+                highlightNav('nav-activity');
+                renderUserActivity();
+            } else if (tab === 'map') {
+                document.getElementById('view-map').classList.remove('hidden');
+                highlightNav('nav-map');
+                refreshMainGoogleMapIframe();
+            } else if (tab === 'account') {
+                document.getElementById('view-account').classList.remove('hidden');
+                highlightNav('nav-account');
+            }
+        }
+
+        function highlightNav(id) {
+            const el = document.getElementById(id);
+            el.classList.remove('text-slate-400', 'font-semibold');
+            el.classList.add('text-[#FF5722]', 'font-bold');
+        }
+
+        function openService(service) {
+            hideAllViews();
+            document.getElementById('main-scroll-area').scrollTop = 0;
+            document.getElementById(`view-${service}`).classList.remove('hidden');
+            if (service === 'food') {
+                renderFoodShopBrowser();
+                renderFoodCart();
+            } else if (service === 'custom') {
+                updateCustomFeeDisplay();
+            } else if (service === 'bike') {
+                recalculateBikeFare();
+            }
+        }
+
+        function renderHomeShopsStrip() {
+            const strip = document.getElementById('home-shops-strip');
+            if (!allShops.length) {
+                strip.innerHTML = `<p class="text-xs text-slate-400">No partner shops yet</p>`;
+                return;
+            }
+            strip.innerHTML = allShops.map(shop => `
+                <button onclick="openFoodWithShop('${shop.id}')"
+                    class="bg-white border border-slate-200/80 rounded-2xl p-2.5 flex items-center gap-2.5 shrink-0 w-[215px] text-left shadow-2xs hover:border-orange-300 transition">
+                    <img src="${shop.photo || DEFAULT_SHOP_IMG}" alt="${escapeHtml(shop.name)}" class="w-12 h-12 rounded-xl object-cover bg-orange-50 shrink-0 border border-slate-100">
+                    <div class="min-w-0">
+                        <p class="text-xs font-extrabold text-slate-900 truncate">${escapeHtml(shop.name)}</p>
+                        <p class="text-[10px] text-slate-500 truncate mt-0.5">📍 ${escapeHtml(shop.address)}</p>
+                        <span class="inline-block text-[10px] font-bold text-[#FF5722] mt-0.5">Menu (${(shop.items || []).length})</span>
+                    </div>
+                </button>
+            `).join('');
+        }
+
+        function openFoodWithShop(shopId) {
+            selectedShopId = shopId;
+            openService('food');
+        }
+
+        function renderHomeActiveOrder() {
+            const wrap = document.getElementById('home-active-order-wrap');
+            const active = allOrders.find(o => o.status !== 'Delivered' && o.status !== 'Cancelled');
+            if (!active) {
+                wrap.classList.add('hidden');
+                return;
+            }
+            const unread = countUnreadForOrder(active, 'customer');
+            wrap.classList.remove('hidden');
+            wrap.innerHTML = `
+                <div class="bg-white rounded-2xl p-3.5 border border-orange-200 shadow-xs flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-[#FF5722] animate-pulse"></span>
+                            <span class="text-[11px] font-extrabold text-[#FF5722]">Active Order • ${escapeHtml(active.status)}</span>
+                        </div>
+                        <p class="text-xs font-bold text-slate-900 truncate mt-0.5">${escapeHtml(active.details)}</p>
+                    </div>
+                    <button onclick="openChatModal(${active.id}, 'customer')"
+                        class="px-3 py-2 rounded-xl bg-orange-100 hover:bg-orange-200 text-[#FF5722] font-extrabold text-xs shrink-0 transition">
+                        💬 Chat
+                        ${unread > 0 ? `<span class="ml-1 px-1.5 py-0.2 bg-[#FF5722] text-white rounded-full text-[10px]">${unread}</span>` : ''}
+                    </button>
+                </div>
+            `;
+        }
+
+        // =========================================================================
+        // 3. FOOD STOREFRONT & UNIFIED MULTI-SHOP / MULTI-ITEM CART
+        // =========================================================================
+        function renderFoodShopBrowser() {
+            const searchQuery = (document.getElementById('food-menu-search').value || '').trim().toLowerCase();
+            document.getElementById('food-shop-count').textContent = `${allShops.length} Shops`;
+            const pillsContainer = document.getElementById('food-shop-pills');
+            const panelContainer = document.getElementById('food-selected-shop-panel');
+
+            if (!allShops.length) {
+                pillsContainer.innerHTML = "";
+                panelContainer.innerHTML = `<p class="text-xs text-slate-400">No shops available yet</p>`;
+                return;
+            }
+
+            if (!selectedShopId || !allShops.some(s => s.id === selectedShopId)) {
+                selectedShopId = allShops[0].id;
+            }
+
+            // If user typed in search bar, search across ALL shops
+            if (searchQuery.length > 0) {
+                pillsContainer.innerHTML = `<span class="text-[11px] font-bold text-[#FF5722]">Showing search results across all shops:</span>`;
+                let matchedCards = [];
+                allShops.forEach(shop => {
+                    (shop.items || []).forEach(item => {
+                        if (item.name.toLowerCase().includes(searchQuery) || shop.name.toLowerCase().includes(searchQuery)) {
+                            matchedCards.push(buildMenuCardHtml(shop, item, true));
+                        }
+                    });
+                });
+                panelContainer.innerHTML = matchedCards.length
+                    ? `<div class="space-y-2">${matchedCards.join('')}</div>`
+                    : `<p class="text-xs text-slate-400 text-center py-4">No matching menu items found</p>`;
+                return;
+            }
+
+            pillsContainer.innerHTML = allShops.map(shop => {
+                const isSelected = shop.id === selectedShopId;
+                return `
+                    <button type="button" onclick="selectShopInFood('${shop.id}')"
+                        class="px-3.5 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition shrink-0 border ${
+                            isSelected
+                                ? 'bg-[#FF5722] text-white border-[#FF5722] shadow-2xs'
+                                : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300'
+                        }">
+                        🏪 ${escapeHtml(shop.name)}
+                    </button>
+                `;
+            }).join('');
+
+            const activeShop = allShops.find(s => s.id === selectedShopId);
+            if (!activeShop) return;
+
+            const menuCards = (activeShop.items || []).map(item => buildMenuCardHtml(activeShop, item, false)).join('');
+
+            panelContainer.innerHTML = `
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <img src="${activeShop.photo || DEFAULT_SHOP_IMG}" alt="${escapeHtml(activeShop.name)}" class="w-11 h-11 rounded-xl object-cover bg-orange-50 shrink-0">
+                        <div class="min-w-0">
+                            <h3 class="text-xs font-extrabold text-slate-900 truncate">${escapeHtml(activeShop.name)}</h3>
+                            <p class="text-[11px] text-slate-500 truncate">📍 ${escapeHtml(activeShop.address)}</p>
+                        </div>
+                    </div>
+                    <a href="tel:${activeShop.phone}" class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-800 font-bold text-[11px] shrink-0">
+                        📞 Call Shop
+                    </a>
+                </div>
+                <div class="space-y-2">
+                    ${menuCards || `<p class="text-xs text-slate-400 text-center py-3">No items posted in this shop yet</p>`}
+                </div>
+            `;
+        }
+
+        function buildMenuCardHtml(shop, item, showShopBadge) {
+            const priceVal = Number(item.priceNum || parseInt(String(item.price).replace(/[^0-9]/g, ''), 10) || 0);
+            return `
+                <div class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <img src="${item.photo || DEFAULT_SHOP_IMG}" alt="${escapeHtml(item.name)}" class="w-14 h-14 rounded-xl object-cover bg-orange-50 border border-slate-100 shrink-0">
+                        <div class="min-w-0">
+                            ${showShopBadge ? `<span class="text-[10px] font-bold text-slate-400 block truncate">🏪 ${escapeHtml(shop.name)}</span>` : ''}
+                            <h4 class="text-xs font-extrabold text-slate-900 truncate">${escapeHtml(item.name)}</h4>
+                            <p class="text-xs font-extrabold text-[#FF5722] mt-0.5">${priceVal.toLocaleString()} Ks</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addItemToFoodCart('${shop.id}', '${item.id}')"
+                        class="px-3.5 py-2 rounded-xl bg-orange-100 hover:bg-orange-200 active:scale-95 text-[#FF5722] font-extrabold text-xs shrink-0 transition">
+                        + Add
+                    </button>
+                </div>
+            `;
+        }
+
+        function selectShopInFood(shopId) {
+            selectedShopId = shopId;
+            renderFoodShopBrowser();
+        }
+
+        function addItemToFoodCart(shopId, itemId) {
+            const shop = allShops.find(s => s.id === shopId);
+            if (!shop) return;
+            const item = (shop.items || []).find(i => i.id === itemId);
+            if (!item) return;
+
+            const priceVal = Number(item.priceNum || parseInt(String(item.price).replace(/[^0-9]/g, ''), 10) || 0);
+            const existing = foodCart.find(c => c.shopId === shopId && c.itemId === itemId);
+
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                foodCart.push({
+                    shopId: shop.id,
+                    shopName: shop.name,
+                    itemId: item.id,
+                    itemName: item.name,
+                    price: priceVal,
+                    qty: 1
+                });
+            }
+
+            renderFoodCart();
+            showToast(`Added ${item.name} to your basket`);
+        }
+
+        function changeCartQty(index, delta) {
+            if (!foodCart[index]) return;
+            foodCart[index].qty += delta;
+            if (foodCart[index].qty <= 0) {
+                foodCart.splice(index, 1);
+            }
+            renderFoodCart();
+        }
+
+        function computeDeliveryFeeByAddress(addressText, distinctShopCount) {
+            const addr = (addressText || '').toLowerCase();
+            const farKeywords = ["bawgyo", "tonsint", "ဘော်ကြို", "တုံစင့်"];
+            const midKeywords = ["bridge", "narmakhaw", "north", "တံတား", "နားမခေါ်", "မြောက်မြို့"];
+
+            let fee = Number(appConfig.baseRate);
+            if (farKeywords.some(k => addr.includes(k))) fee = Number(appConfig.farRate);
+            else if (midKeywords.some(k => addr.includes(k))) fee = Number(appConfig.midRate);
+
+            if (distinctShopCount > 1) {
+                fee += (distinctShopCount - 1) * Number(appConfig.extraStopRate);
+            }
+            return fee;
+        }
+
+        function renderFoodCart() {
+            const listEl = document.getElementById('food-cart-list');
+            const summaryEl = document.getElementById('food-cart-summary');
+            const badgeEl = document.getElementById('cart-shop-badge');
+
+            if (foodCart.length === 0) {
+                listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4 bg-slate-50 rounded-xl border border-dashed border-slate-200">Tap "+ Add" on any menu item above to build your order</p>`;
+                summaryEl.classList.add('hidden');
+                badgeEl.classList.add('hidden');
+                return;
+            }
+
+            const uniqueShops = [...new Set(foodCart.map(c => c.shopName))];
+            badgeEl.classList.remove('hidden');
+            badgeEl.textContent = uniqueShops.length > 1 ? `${uniqueShops.length} Shops Combined` : `1 Shop`;
+
+            listEl.innerHTML = foodCart.map((c, idx) => `
+                <div class="flex items-center justify-between gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+                    <div class="min-w-0">
+                        <p class="text-[10px] font-bold text-slate-400 truncate">🏪 ${escapeHtml(c.shopName)}</p>
+                        <p class="text-xs font-extrabold text-slate-900 truncate">${escapeHtml(c.itemName)}</p>
+                        <p class="text-[11px] font-bold text-[#FF5722]">${(c.price * c.qty).toLocaleString()} Ks</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button type="button" onclick="changeCartQty(${idx}, -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-300 font-extrabold text-slate-700">-</button>
+                        <span class="text-xs font-extrabold w-4 text-center">${c.qty}</span>
+                        <button type="button" onclick="changeCartQty(${idx}, 1)" class="w-7 h-7 rounded-lg bg-[#FF5722] text-white font-extrabold">+</button>
+                    </div>
+                </div>
+            `).join('');
+
+            summaryEl.classList.remove('hidden');
+            recalculateFoodCartTotals();
+        }
+
+        function recalculateFoodCartTotals() {
+            if (foodCart.length === 0) return;
+            const addr = document.getElementById('food-address').value;
+            const uniqueShops = [...new Set(foodCart.map(c => c.shopName))];
+            const itemsTotal = foodCart.reduce((sum, c) => sum + (c.price * c.qty), 0);
+            const delivFee = computeDeliveryFeeByAddress(addr, uniqueShops.length);
+
+            document.getElementById('cart-items-total').textContent = `${itemsTotal.toLocaleString()} Ks`;
+            document.getElementById('cart-deliv-fee').textContent = `${delivFee.toLocaleString()} Ks`;
+            document.getElementById('cart-grand-total').textContent = `${(itemsTotal + delivFee).toLocaleString()} Ks`;
+        }
+
+        function captureFoodLocation() {
+            const btn = document.getElementById('food-loc-btn');
+            btn.innerHTML = `<span>⏳</span><span>Detecting GPS...</span>`;
+
+            const onSuccess = (lat, lng) => {
+                foodCoords = { lat, lng };
+                btn.className = "w-full py-3 px-4 rounded-xl bg-emerald-600 text-white font-bold text-xs transition flex items-center justify-center gap-2";
+                btn.innerHTML = `<span>📍</span><span>GPS Location Attached</span>`;
+                document.getElementById('food-coords-text').textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                document.getElementById('food-fee-box').classList.remove('hidden');
+            };
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => onSuccess(pos.coords.latitude, pos.coords.longitude),
+                    () => onSuccess(HSIPAW_LAT, HSIPAW_LNG),
+                    { timeout: 4000 }
+                );
+            } else {
+                onSuccess(HSIPAW_LAT, HSIPAW_LNG);
+            }
+        }
+
+        function submitFoodOrder(e) {
+            e.preventDefault();
+            if (foodCart.length === 0) {
+                showToast("Please add at least one menu item to your basket");
+                return;
+            }
+            const address = document.getElementById('food-address').value.trim();
+            if (!address) return;
+
+            const uniqueShops = [...new Set(foodCart.map(c => c.shopName))];
+            const itemsTotal = foodCart.reduce((sum, c) => sum + (c.price * c.qty), 0);
+            const delivFee = computeDeliveryFeeByAddress(address, uniqueShops.length);
+
+            // Group all items across 1 or multiple shops into ONE unified order
+            const summaryLines = foodCart.map(c => `[${c.shopName}] ${c.itemName} x${c.qty} (${(c.price * c.qty).toLocaleString()} Ks)`).join('\n');
+
+            const newOrder = {
+                id: Date.now(),
+                type: 'food',
+                customerName: userProfile.name,
+                customerPhone: userProfile.phone,
+                customerPhoto: userProfile.photo || DEFAULT_AVATAR,
+                details: summaryLines,
+                pickupAddress: uniqueShops.join(' + '),
+                dropoffAddress: address,
+                pickupLat: HSIPAW_LAT,
+                pickupLng: HSIPAW_LNG,
+                dropoffLat: foodCoords ? foodCoords.lat : HSIPAW_LAT,
+                dropoffLng: foodCoords ? foodCoords.lng : HSIPAW_LNG,
+                fareText: `Deliv: ${delivFee.toLocaleString()} Ks | Total: ${(itemsTotal + delivFee).toLocaleString()} Ks`,
+                status: 'Pending',
+                assignedRiderId: null,
+                assignedRiderName: null,
+                assignedRiderPhone: null,
+                createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                messages: []
+            };
+
+            allOrders.unshift(newOrder);
+            saveOrders();
+
+            foodCart = [];
+            renderFoodCart();
+            showToast("Unified Food Order placed!");
+            switchBottomTab('activity');
+        }
+
+        // =========================================================================
+        // 3B. CUSTOM "ORDER ANYTHING" SUBMISSION
+        // =========================================================================
+        function updateCustomFeeDisplay() {
+            const addr = document.getElementById('custom-address').value;
+            const fee = computeDeliveryFeeByAddress(addr, 1);
+            document.getElementById('custom-fee-display').textContent = `${fee.toLocaleString()} Ks`;
+        }
+
+        function captureCustomLocation() {
+            const btn = document.getElementById('custom-loc-btn');
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        customCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                        btn.className = "w-full py-3 px-4 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-2";
+                        btn.innerHTML = `<span>📍</span><span>GPS Attached (${customCoords.lat.toFixed(4)}, ${customCoords.lng.toFixed(4)})</span>`;
+                    },
+                    () => {
+                        customCoords = { lat: HSIPAW_LAT, lng: HSIPAW_LNG };
+                        btn.className = "w-full py-3 px-4 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-2";
+                        btn.innerHTML = `<span>📍</span><span>Hsipaw Town GPS Attached</span>`;
+                    }
+                );
+            }
+        }
+
+        function submitCustomOrder(e) {
+            e.preventDefault();
+            const shop = document.getElementById('custom-shop-name').value.trim() || "Custom Store / Market";
+            const items = document.getElementById('custom-items').value.trim();
+            const address = document.getElementById('custom-address').value.trim();
+            if (!items || !address) return;
+
+            const fee = computeDeliveryFeeByAddress(address, 1);
+
+            const newOrder = {
+                id: Date.now(),
+                type: 'custom',
+                customerName: userProfile.name,
+                customerPhone: userProfile.phone,
+                customerPhoto: userProfile.photo || DEFAULT_AVATAR,
+                details: `[Custom Buy - ${shop}]\n${items}`,
+                pickupAddress: shop,
+                dropoffAddress: address,
+                pickupLat: HSIPAW_LAT,
+                pickupLng: HSIPAW_LNG,
+                dropoffLat: customCoords ? customCoords.lat : HSIPAW_LAT,
+                dropoffLng: customCoords ? customCoords.lng : HSIPAW_LNG,
+                fareText: `Deliv Fee: ${fee.toLocaleString()} Ks + Receipt`,
+                status: 'Pending',
+                assignedRiderId: null,
+                assignedRiderName: null,
+                assignedRiderPhone: null,
+                createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                messages: []
+            };
+
+            allOrders.unshift(newOrder);
+            saveOrders();
+            e.target.reset();
+            showToast("Custom order submitted!");
+            switchBottomTab('activity');
+        }
+
+        // =========================================================================
+        // 4. GRAB-STYLE BIKE TAXI & SATELLITE PICKER
+        // =========================================================================
+        function renderGrabSuggestedPlaces() {
+            const list = document.getElementById('grab-suggested-places');
+            if (!list) return;
+            list.innerHTML = HSIPAW_PLACES.map(p => `
+                <button type="button" onclick="applyGrabSuggestedPlace('${escapeAttr(p.name)}', ${p.lat}, ${p.lng})"
+                    class="w-full px-4 py-3 flex items-start gap-3 text-left hover:bg-slate-50 transition">
+                    <span class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs shrink-0 mt-0.5">🕒</span>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs font-bold text-slate-900 truncate">${escapeHtml(p.name)}</p>
+                        <p class="text-[11px] text-slate-500 truncate">${escapeHtml(p.sub)}</p>
+                    </div>
+                </button>
+            `).join('');
+        }
+
+        function applyGrabSuggestedPlace(name, lat, lng) {
+            if (activeBikeField === 'pickup') {
+                document.getElementById('bike-pickup').value = name;
+                bikePickupCoords = { lat, lng };
+                activeBikeField = 'dropoff';
+                document.getElementById('bike-dropoff').focus();
+            } else {
+                document.getElementById('bike-dropoff').value = name;
+                bikeDropoffCoords = { lat, lng };
+            }
+            recalculateBikeFare();
+        }
+
+        function captureBikePickupGPS() {
+            const sub = document.getElementById('grab-curr-sub');
+            sub.textContent = "Detecting live GPS...";
+            const onSuccess = (lat, lng) => {
+                bikePickupCoords = { lat, lng };
+                document.getElementById('bike-pickup').value = `Current Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                sub.textContent = `GPS Ready: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                activeBikeField = 'dropoff';
+                recalculateBikeFare();
+            };
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => onSuccess(pos.coords.latitude, pos.coords.longitude),
+                    () => onSuccess(HSIPAW_LAT, HSIPAW_LNG),
+                    { timeout: 4000 }
+                );
+            } else {
+                onSuccess(HSIPAW_LAT, HSIPAW_LNG);
+            }
+        }
+
+        function openGoogleMapPicker(target) {
+            currentPickerTarget = target;
+            tempPickedLabel = '';
+            document.getElementById('gmap-picker-title').textContent =
+                target === 'pickup' ? "🛰️ Set Pickup on Map" : "🛰️ Set Destination on Map";
+            const modal = document.getElementById('gmap-picker-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            updatePickerSatelliteMap(HSIPAW_LAT, HSIPAW_LNG);
+        }
+
+        function updatePickerSatelliteMap(lat, lng) {
+            tempPickedLat = lat;
+            tempPickedLng = lng;
+            document.getElementById('picker-coords-display').textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            document.getElementById('picker-google-map-iframe').src =
+                `https://maps.google.com/maps?q=${lat},${lng}&t=k&z=16&output=embed`;
+        }
+
+        function selectHsipawLandmark(lat, lng, label) {
+            tempPickedLabel = label;
+            updatePickerSatelliteMap(lat, lng);
+        }
+
+        function useLiveGpsInPicker() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        tempPickedLabel = 'Live GPS Pin';
+                        updatePickerSatelliteMap(pos.coords.latitude, pos.coords.longitude);
+                    },
+                    () => updatePickerSatelliteMap(HSIPAW_LAT, HSIPAW_LNG)
+                );
+            }
+        }
+
+        function closeGoogleMapPicker() {
+            const modal = document.getElementById('gmap-picker-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function confirmGoogleMapPickerSelection() {
+            const coordStr = `${tempPickedLat.toFixed(4)}, ${tempPickedLng.toFixed(4)}`;
+            const label = tempPickedLabel || `Map Pin (${coordStr})`;
+            if (currentPickerTarget === 'pickup') {
+                bikePickupCoords = { lat: tempPickedLat, lng: tempPickedLng };
+                document.getElementById('bike-pickup').value = label;
+            } else {
+                bikeDropoffCoords = { lat: tempPickedLat, lng: tempPickedLng };
+                document.getElementById('bike-dropoff').value = label;
+            }
+            recalculateBikeFare();
+            closeGoogleMapPicker();
+        }
+
+        function recalculateBikeFare() {
+            const dropoffText = document.getElementById('bike-dropoff').value.toLowerCase();
+            const farKeywords = ["bawgyo", "tonsint", "ဘော်ကြို", "တုံစင့်"];
+            const midKeywords = ["bridge", "narmakhaw", "north", "station", "တံတား", "နားမခေါ်", "မြောက်မြို့"];
+
+            let fare = Number(appConfig.baseRate);
+            let zoneLabel = "Town Base Zone";
+
+            if (farKeywords.some(w => dropoffText.includes(w))) {
+                fare = Number(appConfig.farRate);
+                zoneLabel = "Outer Zone / Bawgyo Rate";
+            } else if (midKeywords.some(w => dropoffText.includes(w))) {
+                fare = Number(appConfig.midRate);
+                zoneLabel = "Nearby Ward Rate";
+            } else if (bikePickupCoords && bikeDropoffCoords) {
+                const dist = Math.hypot(bikePickupCoords.lat - bikeDropoffCoords.lat, bikePickupCoords.lng - bikeDropoffCoords.lng);
+                if (dist > 0.025) { fare = Number(appConfig.farRate); zoneLabel = "Outer Zone Rate"; }
+                else if (dist > 0.01) { fare = Number(appConfig.midRate); zoneLabel = "Nearby Ward Rate"; }
+            }
+
+            document.getElementById('bike-zone-label').textContent = zoneLabel;
+            document.getElementById('bike-fare-display').textContent = `${fare.toLocaleString()} Ks`;
+        }
+
+        function submitBikeOrder(e) {
+            e.preventDefault();
+            const pickup = document.getElementById('bike-pickup').value.trim();
+            const dropoff = document.getElementById('bike-dropoff').value.trim();
+            const fareText = document.getElementById('bike-fare-display').textContent;
+
+            const newRide = {
+                id: Date.now(),
+                type: 'bike',
+                customerName: userProfile.name,
+                customerPhone: userProfile.phone,
+                customerPhoto: userProfile.photo || DEFAULT_AVATAR,
+                details: `Bike Taxi Ride Request`,
+                pickupAddress: pickup,
+                dropoffAddress: dropoff,
+                pickupLat: bikePickupCoords ? bikePickupCoords.lat : HSIPAW_LAT,
+                pickupLng: bikePickupCoords ? bikePickupCoords.lng : HSIPAW_LNG,
+                dropoffLat: bikeDropoffCoords ? bikeDropoffCoords.lat : HSIPAW_LAT,
+                dropoffLng: bikeDropoffCoords ? bikeDropoffCoords.lng : HSIPAW_LNG,
+                fareText: fareText,
+                status: 'Pending',
+                assignedRiderId: null,
+                assignedRiderName: null,
+                assignedRiderPhone: null,
+                createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                messages: []
+            };
+
+            allOrders.unshift(newRide);
+            saveOrders();
+            e.target.reset();
+            showToast("Bike Taxi requested!");
+            switchBottomTab('activity');
+        }
+
+        // =========================================================================
+        // 5. CUSTOMER ACTIVITY TAB (WITH CANCELLATION LOCK RULE)
+        // =========================================================================
+        function cancelOrderByCustomer(orderId) {
+            const idx = allOrders.findIndex(o => o.id === orderId);
+            if (idx === -1) return;
+
+            // Strict protection rule: cannot cancel once a rider has accepted/started buying
+            if (allOrders[idx].status !== 'Pending' || allOrders[idx].assignedRiderId) {
+                showToast("Cannot cancel: A rider has already accepted this order!");
+                renderUserActivity();
+                return;
+            }
+
+            allOrders[idx].status = 'Cancelled';
+            saveOrders();
+            renderUserActivity();
+            showToast("Order cancelled");
+        }
+
+        function renderUserActivity() {
+            const container = document.getElementById('user-activity-list');
+            container.innerHTML = "";
+
+            if (allOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 space-y-2">
+                        <div class="text-4xl">📭</div>
+                        <p class="text-sm font-bold text-slate-600">No orders placed yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            allOrders.forEach(item => {
+                const isBike = item.type === 'bike';
+                const badge = isBike
+                    ? `<span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">🏍️ Bike Taxi</span>`
+                    : item.type === 'custom'
+                    ? `<span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">🛍️ Custom Order</span>`
+                    : `<span class="px-2.5 py-0.5 rounded-full bg-orange-100 text-[#FF5722] text-[11px] font-bold">🍜 Food Order</span>`;
+
+                let statusStyle = "bg-slate-100 text-slate-700";
+                if (item.status === 'Accepted' || item.status === 'On the way') statusStyle = "bg-blue-100 text-blue-800";
+                else if (item.status === 'Delivered') statusStyle = "bg-emerald-100 text-emerald-800";
+                else if (item.status === 'Cancelled') statusStyle = "bg-red-100 text-red-700";
+
+                const canCancel = (item.status === 'Pending' && !item.assignedRiderId);
+                const unread = countUnreadForOrder(item, 'customer');
+
+                const riderInfoHtml = item.assignedRiderName
+                    ? `<p class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg mt-2">🛵 Rider: ${escapeHtml(item.assignedRiderName)} (${escapeHtml(item.assignedRiderPhone || '')})</p>`
+                    : '';
+
+                const cancelBtnHtml = canCancel
+                    ? `<button onclick="cancelOrderByCustomer(${item.id})"
+                           class="px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition">
+                           Cancel Order
+                       </button>`
+                    : (item.status !== 'Delivered' && item.status !== 'Cancelled')
+                    ? `<span class="text-[10px] font-bold text-slate-400">🔒 In progress (Cannot cancel)</span>`
+                    : '';
+
+                const card = `
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs space-y-3">
+                        <div class="flex items-center justify-between">
+                            ${badge}
+                            <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold ${statusStyle}">
+                                ${escapeHtml(item.status)}
+                            </span>
+                        </div>
+
+                        <div>
+                            <p class="text-xs font-extrabold text-slate-900 whitespace-pre-line">${escapeHtml(item.details)}</p>
+                            <p class="text-[11px] text-slate-500 mt-1">📍 ${escapeHtml(item.dropoffAddress)}</p>
+                            ${riderInfoHtml}
+                        </div>
+
+                        <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">${item.createdAt || ''}</span>
+                                <span class="text-xs font-extrabold text-[#FF5722]">${escapeHtml(item.fareText)}</span>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                ${cancelBtnHtml}
+                                <button onclick="openChatModal(${item.id}, 'customer')"
+                                    class="px-3.5 py-2 rounded-xl bg-[#FF5722] hover:bg-[#E64A19] text-white font-bold text-xs flex items-center gap-1 transition">
+                                    <span>💬 Chat</span>
+                                    ${unread > 0 ? `<span class="px-1.5 py-0.2 bg-white text-[#FF5722] rounded-full text-[10px] font-extrabold">${unread}</span>` : ''}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', card);
+            });
+        }
+
+        // =========================================================================
+        // 6. RIDER STAFF PORTAL (ONE-TIME PIN -> ADMIN APPROVAL -> EXCLUSIVE CLAIM)
+        // =========================================================================
+        function openRiderPortalGate() {
+            // If this rider already entered PIN once, skip PIN modal completely!
+            if (myRiderSession && myRiderSession.pinVerified) {
+                enterRiderPortalScreen();
+                return;
+            }
+            document.getElementById('rider-pin-input').value = "";
+            document.getElementById('rider-pin-error').classList.add('hidden');
+            const m = document.getElementById('rider-pin-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            setTimeout(() => document.getElementById('rider-pin-input').focus(), 100);
+        }
+
+        function closeRiderPinModal() {
+            const m = document.getElementById('rider-pin-modal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function verifyRiderPin() {
+            if (document.getElementById('rider-pin-input').value.trim() === RIDER_SECRET_PIN) {
+                myRiderSession = { pinVerified: true, riderId: null };
+                localStorage.setItem(MY_RIDER_SESSION_KEY, JSON.stringify(myRiderSession));
+                closeRiderPinModal();
+                enterRiderPortalScreen();
+            } else {
+                document.getElementById('rider-pin-error').classList.remove('hidden');
+            }
+        }
+
+        function enterRiderPortalScreen() {
+            document.getElementById('terms-screen').classList.add('hidden');
+            document.getElementById('register-screen').classList.add('hidden');
+            document.getElementById('main-app-shell').classList.add('hidden');
+            document.getElementById('admin-screen').classList.add('hidden');
+            document.getElementById('rider-screen').classList.remove('hidden');
+            renderRiderPortalState();
+        }
+
+        function exitRiderPortal() {
+            enterMainApp();
+        }
+
+        function submitRiderApplication(e) {
+            e.preventDefault();
+            const name = document.getElementById('rider-app-name').value.trim();
+            const phone = document.getElementById('rider-app-phone').value.trim();
+            if (!name || !phone) return;
+
+            const newRider = {
+                id: 'rider_' + Date.now(),
+                name: name,
+                phone: phone,
+                approved: false,
+                joinedAt: new Date().toLocaleDateString()
+            };
+
+            allRiders.unshift(newRider);
+            saveRiders();
+
+            myRiderSession = { pinVerified: true, riderId: newRider.id };
+            localStorage.setItem(MY_RIDER_SESSION_KEY, JSON.stringify(myRiderSession));
+            renderRiderPortalState();
+            showToast("Application sent to Admin for approval");
+        }
+
+        function checkRiderApprovalStatus() {
+            allRiders = JSON.parse(localStorage.getItem(RIDERS_STORAGE_KEY)) || [];
+            renderRiderPortalState();
+            showToast("Checked approval status");
+        }
+
+        function renderRiderPortalState() {
+            const regBox = document.getElementById('rider-register-box');
+            const pendBox = document.getElementById('rider-pending-box');
+            const boardBox = document.getElementById('rider-board-box');
+
+            regBox.classList.add('hidden');
+            pendBox.classList.add('hidden');
+            boardBox.classList.add('hidden');
+
+            const me = myRiderSession && myRiderSession.riderId
+                ? allRiders.find(r => r.id === myRiderSession.riderId)
+                : null;
+
+            if (!me) {
+                regBox.classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('rider-header-sub').textContent = `${me.name} • ${me.phone}`;
+
+            if (!me.approved) {
+                pendBox.classList.remove('hidden');
+                return;
+            }
+
+            // Approved Rider -> Show Active Claimed Order + Available Unclaimed Pool
+            boardBox.classList.remove('hidden');
+            renderRiderDispatchBoard(me);
+        }
+
+        function renderRiderDispatchBoard(me) {
+            // 1. Orders claimed by THIS rider that are still active
+            const myActive = allOrders.filter(o => o.assignedRiderId === me.id && o.status !== 'Delivered' && o.status !== 'Cancelled');
+            const myWrap = document.getElementById('rider-my-active-wrap');
+
+            if (myActive.length > 0) {
+                myWrap.innerHTML = `<h2 class="text-xs font-extrabold text-emerald-800 uppercase tracking-wider">My Active Deliveries (${myActive.length})</h2>` +
+                myActive.map(order => `
+                    <div class="bg-white p-4 rounded-2xl border-2 border-emerald-500 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-extrabold">${escapeHtml(order.status)}</span>
+                            <span class="text-xs font-extrabold text-slate-900">${escapeHtml(order.fareText)}</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-extrabold text-slate-900">${escapeHtml(order.customerName)} (${escapeHtml(order.customerPhone)})</p>
+                            <p class="text-xs text-slate-700 whitespace-pre-line mt-1">${escapeHtml(order.details)}</p>
+                            <p class="text-xs text-slate-500 mt-1">📍 Drop-off: ${escapeHtml(order.dropoffAddress)}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="https://maps.google.com/maps?q=${order.dropoffLat},${order.dropoffLng}&t=k" target="_blank"
+                               class="py-2.5 rounded-xl bg-blue-50 text-blue-700 font-bold text-xs text-center">🛰️ Map</a>
+                            <button onclick="openChatModal(${order.id}, 'admin')"
+                               class="py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs">💬 Chat Customer</button>
+                        </div>
+                        <button onclick="completeOrderByRider(${order.id})"
+                            class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-sm">
+                            ✅ Mark Delivered & Complete Order
+                        </button>
+                    </div>
+                `).join('');
+            } else {
+                myWrap.innerHTML = '';
+            }
+
+            // 2. Unclaimed Pending Orders (Automatically hides orders claimed by other riders!)
+            const availablePool = allOrders.filter(o => o.status === 'Pending' && !o.assignedRiderId);
+            document.getElementById('rider-pool-count').textContent = availablePool.length;
+            const availList = document.getElementById('rider-available-list');
+
+            if (availablePool.length === 0) {
+                availList.innerHTML = `<p class="text-center text-xs text-slate-400 py-8 bg-white rounded-2xl border border-slate-200">No unclaimed orders right now</p>`;
+                return;
+            }
+
+            availList.innerHTML = availablePool.map(order => `
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-[#FF5722] uppercase">${escapeHtml(order.type)}</span>
+                        <span class="text-xs font-extrabold text-slate-900">${escapeHtml(order.fareText)}</span>
+                    </div>
+                    <div>
+                        <p class="text-xs font-extrabold text-slate-900 whitespace-pre-line">${escapeHtml(order.details)}</p>
+                        <p class="text-[11px] text-slate-500 mt-1">From: ${escapeHtml(order.pickupAddress)}</p>
+                        <p class="text-[11px] text-slate-500">To: ${escapeHtml(order.dropoffAddress)}</p>
+                    </div>
+                    <button onclick="claimOrderByRider(${order.id})"
+                        class="w-full py-3 rounded-xl bg-[#FF5722] hover:bg-[#E64A19] text-white font-extrabold text-xs shadow-xs">
+                        🛵 Accept & Claim Order
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function claimOrderByRider(orderId) {
+            // Re-read latest storage first to prevent two riders claiming at the exact same millisecond
+            allOrders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY)) || [];
+            const order = allOrders.find(o => o.id === orderId);
+            const me = allRiders.find(r => r.id === myRiderSession.riderId);
+
+            if (!order || !me) return;
+            if (order.assignedRiderId || order.status !== 'Pending') {
+                showToast("Sorry! Another rider just claimed this order.");
+                renderRiderPortalState();
+                return;
+            }
+
+            order.assignedRiderId = me.id;
+            order.assignedRiderName = me.name;
+            order.assignedRiderPhone = me.phone;
+            order.status = 'Accepted';
+            saveOrders();
+            renderRiderPortalState();
+            showToast("Order locked to you! Customer can no longer cancel.");
+        }
+
+        function completeOrderByRider(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+            order.status = 'Delivered';
+            order.completedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            saveOrders();
+            renderRiderPortalState();
+            showToast("Order marked as Delivered & removed from active queue!");
+        }
+
+        // =========================================================================
+        // 7. ADMIN PANEL (ORDERS + RIDER APPROVALS + RATES & RULES EDITOR)
+        // =========================================================================
+        function openPinModal() {
+            document.getElementById('pin-input').value = "";
+            document.getElementById('pin-error').classList.add('hidden');
+            const m = document.getElementById('pin-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            setTimeout(() => document.getElementById('pin-input').focus(), 100);
+        }
+
+        function closePinModal() {
+            const m = document.getElementById('pin-modal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function verifyPin() {
+            if (document.getElementById('pin-input').value.trim() === ADMIN_SECRET_PIN) {
+                closePinModal();
+                showAdminScreen();
+            } else {
+                document.getElementById('pin-error').classList.remove('hidden');
+            }
+        }
+
+        function showAdminScreen() {
+            document.getElementById('terms-screen').classList.add('hidden');
+            document.getElementById('register-screen').classList.add('hidden');
+            document.getElementById('main-app-shell').classList.add('hidden');
+            document.getElementById('rider-screen').classList.add('hidden');
+            document.getElementById('admin-screen').classList.remove('hidden');
+            switchAdminTab('orders');
+        }
+
+        function exitAdmin() {
+            enterMainApp();
+        }
+
+        function switchAdminTab(tab) {
+            ['admin-view-orders', 'admin-view-staff', 'admin-view-rates'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            ['adm-tab-orders', 'adm-tab-staff', 'adm-tab-rates'].forEach(id => {
+                document.getElementById(id).className = "px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 whitespace-nowrap";
+            });
+
+            document.getElementById(`admin-view-${tab}`).classList.remove('hidden');
+            document.getElementById(`adm-tab-${tab}`).className = "px-3 py-1.5 rounded-lg bg-slate-900 text-white whitespace-nowrap";
+
+            if (tab === 'orders') renderAdminOrders();
+            else if (tab === 'staff') renderAdminStaffList();
+            else if (tab === 'rates') populateAdminConfigForm();
+        }
+
+        function renderAdminOrders() {
+            const activeOrders = allOrders.filter(o => o.status !== 'Delivered' && o.status !== 'Cancelled');
+            document.getElementById('admin-count').textContent = activeOrders.length;
+            const pendingRidersCount = allRiders.filter(r => !r.approved).length;
+            document.getElementById('admin-staff-pending-badge').textContent = pendingRidersCount;
+
+            const container = document.getElementById('admin-orders-container');
+            if (allOrders.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 text-sm py-12">No orders yet</p>`;
+                return;
+            }
+
+            container.innerHTML = allOrders.map((order, idx) => {
+                const riderTag = order.assignedRiderName
+                    ? `<span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900 font-extrabold text-[11px]">🛵 Rider: ${escapeHtml(order.assignedRiderName)}</span>`
+                    : `<span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 font-bold text-[11px]">⏳ Unassigned</span>`;
+
+                return `
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            ${riderTag}
+                            <span class="text-xs font-extrabold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg">${escapeHtml(order.status)}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <img src="${order.customerPhoto || DEFAULT_AVATAR}" alt="Customer" class="w-10 h-10 rounded-full object-cover border border-slate-200">
+                                <div class="min-w-0">
+                                    <h3 class="text-sm font-extrabold text-slate-900 truncate">${escapeHtml(order.customerName)}</h3>
+                                    <p class="text-xs text-slate-500">${escapeHtml(order.customerPhone)}</p>
+                                </div>
+                            </div>
+                            <a href="tel:${order.customerPhone}" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-900 font-bold text-xs">📞 Call</a>
+                        </div>
+
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/70 space-y-1 text-xs">
+                            <p class="font-extrabold text-slate-900 whitespace-pre-line">${escapeHtml(order.details)}</p>
+                            <p class="text-slate-600">📍 ${escapeHtml(order.dropoffAddress)}</p>
+                            <p class="font-bold text-[#FF5722]">${escapeHtml(order.fareText)}</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="cycleAdminOrderStatus(${idx})" class="py-2.5 rounded-xl bg-[#FF5722] text-white font-extrabold text-xs">
+                                Change Status
+                            </button>
+                            <button onclick="openChatModal(${order.id}, 'admin')" class="py-2.5 rounded-xl bg-slate-900 text-white font-extrabold text-xs">
+                                💬 Chat
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function cycleAdminOrderStatus(index) {
+            const flow = ['Pending', 'Accepted', 'On the way', 'Delivered'];
+            const nextIdx = (flow.indexOf(allOrders[index].status) + 1) % flow.length;
+            allOrders[index].status = flow[nextIdx];
+            saveOrders();
+            renderAdminOrders();
+        }
+
+        function renderAdminStaffList() {
+            const list = document.getElementById('admin-staff-list');
+            if (allRiders.length === 0) {
+                list.innerHTML = `<p class="text-center text-xs text-slate-400 py-8">No rider staff applications yet</p>`;
+                return;
+            }
+            list.innerHTML = allRiders.map((r, idx) => `
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-sm font-extrabold text-slate-900">${escapeHtml(r.name)}</p>
+                        <p class="text-xs text-slate-500">📞 ${escapeHtml(r.phone)}</p>
+                        <span class="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${r.approved ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                            ${r.approved ? '✅ Approved Rider' : '⏳ Pending Approval'}
+                        </span>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        ${!r.approved
+                            ? `<button onclick="approveRider(${idx})" class="px-3 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs">Approve</button>`
+                            : `<button onclick="revokeRider(${idx})" class="px-3 py-1.5 rounded-xl bg-red-50 text-red-600 font-bold text-xs">Revoke</button>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function approveRider(idx) {
+            allRiders[idx].approved = true;
+            saveRiders();
+            renderAdminStaffList();
+            showToast(`${allRiders[idx].name} approved as Rider!`);
+        }
+
+        function revokeRider(idx) {
+            allRiders[idx].approved = false;
+            saveRiders();
+            renderAdminStaffList();
+            showToast("Rider access revoked");
+        }
+
+        function populateAdminConfigForm() {
+            document.getElementById('cfg-rate-base').value = appConfig.baseRate;
+            document.getElementById('cfg-rate-mid').value = appConfig.midRate;
+            document.getElementById('cfg-rate-far').value = appConfig.farRate;
+            document.getElementById('cfg-rate-stop').value = appConfig.extraStopRate;
+            document.getElementById('cfg-rules-textarea').value = (appConfig.rules || []).join('\n');
+        }
+
+        function saveAdminRates(e) {
+            e.preventDefault();
+            appConfig.baseRate = Number(document.getElementById('cfg-rate-base').value) || 3500;
+            appConfig.midRate = Number(document.getElementById('cfg-rate-mid').value) || 5000;
+            appConfig.farRate = Number(document.getElementById('cfg-rate-far').value) || 8000;
+            appConfig.extraStopRate = Number(document.getElementById('cfg-rate-stop').value) || 1000;
+            saveConfig();
+            renderDynamicRatesAndRules();
+            showToast("Delivery & Bike Taxi rates updated!");
+        }
+
+        function saveAdminRules(e) {
+            e.preventDefault();
+            const raw = document.getElementById('cfg-rules-textarea').value;
+            appConfig.rules = raw.split('\n').map(l => l.trim()).filter(Boolean);
+            saveConfig();
+            renderDynamicRatesAndRules();
+            showToast("Terms & Rules updated!");
+        }
+
+        // =========================================================================
+        // 8. SHOP MERCHANT PORTAL (HIDDEN PIN)
+        // =========================================================================
+        function openShopPortal() {
+            if (shopUnlocked) { openShopManagerView(); return; }
+            document.getElementById('shop-pass-input').value = "";
+            document.getElementById('shop-pass-error').classList.add('hidden');
+            const modal = document.getElementById('shop-pass-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => document.getElementById('shop-pass-input').focus(), 100);
+        }
+
+        function closeShopPassModal() {
+            const modal = document.getElementById('shop-pass-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function verifyShopPassword() {
+            if (document.getElementById('shop-pass-input').value.trim() === SHOP_SECRET_PIN) {
+                shopUnlocked = true;
+                closeShopPassModal();
+                openShopManagerView();
+            } else {
+                document.getElementById('shop-pass-error').classList.remove('hidden');
+            }
+        }
+
+        function openShopManagerView() {
+            hideAllViews();
+            document.getElementById('view-shop-manager').classList.remove('hidden');
+            renderShopManagerList();
+        }
+
+        function openNewShopForm() {
+            document.getElementById('shop-setup-form').reset();
+            tempShopPhoto = DEFAULT_SHOP_IMG;
+            document.getElementById('shop-photo-preview').innerHTML = `<span class="text-xl">📷</span><span class="text-[9px] font-bold">Photo</span>`;
+        }
+
+        function previewShopPhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                tempShopPhoto = e.target.result;
+                document.getElementById('shop-photo-preview').innerHTML = `<img src="${tempShopPhoto}" alt="Shop" class="w-full h-full object-cover">`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveShopChannel(e) {
+            e.preventDefault();
+            const name = document.getElementById('shop-name-input').value.trim();
+            const phone = document.getElementById('shop-phone-input').value.trim();
+            const address = document.getElementById('shop-address-input').value.trim();
+            if (!name || !phone || !address) return;
+
+            allShops.unshift({ id: 'shop_' + Date.now(), name, phone, address, photo: tempShopPhoto, items: [] });
+            saveShops();
+            openNewShopForm();
+            renderShopManagerList();
+            showToast(`Shop "${name}" registered!`);
+        }
+
+        function addMenuItemToShop(event, shopId) {
+            event.preventDefault();
+            const form = event.target;
+            const itemName = form.querySelector('.menu-name-input').value.trim();
+            const itemPrice = parseInt(form.querySelector('.menu-price-input').value, 10) || 0;
+            const photoData = form.dataset.photoData || DEFAULT_SHOP_IMG;
+
+            const shop = allShops.find(s => s.id === shopId);
+            if (!shop || !itemName || !itemPrice) return;
+            if (!shop.items) shop.items = [];
+
+            shop.items.unshift({ id: 'item_' + Date.now(), name: itemName, priceNum: itemPrice, photo: photoData });
+            saveShops();
+            renderShopManagerList();
+            showToast(`Added "${itemName}" to menu`);
+        }
+
+        function handleMenuItemPhotoChange(event, formId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const form = document.getElementById(formId);
+                form.dataset.photoData = e.target.result;
+                form.querySelector('.menu-photo-label').textContent = "✅ Photo Ready";
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function deleteMenuItem(shopId, itemId) {
+            const shop = allShops.find(s => s.id === shopId);
+            if (!shop) return;
+            shop.items = shop.items.filter(i => i.id !== itemId);
+            saveShops();
+            renderShopManagerList();
+        }
+
+        function renderShopManagerList() {
+            const container = document.getElementById('shop-manager-list');
+            container.innerHTML = allShops.map(shop => {
+                const formId = `add-menu-form-${shop.id}`;
+                const itemsHtml = (shop.items || []).map(item => `
+                    <div class="flex items-center justify-between gap-2 bg-slate-50 p-2 rounded-xl border border-slate-200/70">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <img src="${item.photo || DEFAULT_SHOP_IMG}" class="w-10 h-10 rounded-lg object-cover">
+                            <div class="min-w-0">
+                                <p class="text-xs font-extrabold text-slate-900 truncate">${escapeHtml(item.name)}</p>
+                                <p class="text-[11px] font-bold text-[#FF5722]">${Number(item.priceNum || 0).toLocaleString()} Ks</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="deleteMenuItem('${shop.id}', '${item.id}')" class="px-2 py-1 rounded-lg bg-red-50 text-red-600 text-[11px] font-bold">Delete</button>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 space-y-3">
+                        <div class="flex items-center gap-3 pb-2 border-b border-slate-100">
+                            <img src="${shop.photo || DEFAULT_SHOP_IMG}" class="w-12 h-12 rounded-xl object-cover">
+                            <div>
+                                <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(shop.name)}</h3>
+                                <p class="text-[11px] text-slate-500">📍 ${escapeHtml(shop.address)}</p>
+                            </div>
+                        </div>
+                        <form id="${formId}" onsubmit="addMenuItemToShop(event, '${shop.id}')" class="bg-orange-50/70 p-3 rounded-xl border border-orange-200 space-y-2">
+                            <p class="text-[11px] font-extrabold text-[#FF5722]">+ Add Menu Item</p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" required placeholder="Item Name" class="menu-name-input rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-xs">
+                                <input type="number" required placeholder="Price (Ks)" class="menu-price-input rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-xs">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <label class="menu-photo-label flex-1 cursor-pointer py-2 px-3 rounded-lg bg-white border border-slate-300 text-slate-700 text-[11px] font-bold text-center">
+                                    📷 Choose Photo
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleMenuItemPhotoChange(event, '${formId}')">
+                                </label>
+                                <button type="submit" class="px-4 py-2 rounded-lg bg-[#FF5722] text-white text-xs font-extrabold">Post</button>
+                            </div>
+                        </form>
+                        <div class="space-y-1.5">${itemsHtml}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // =========================================================================
+        // 9. SATELLITE MAP & LIVE CHAT
+        // =========================================================================
+        function setMainGoogleMapType(type) {
+            mainMapType = type;
+            document.getElementById('btn-map-sat').className = type === 'k' ? "px-2.5 py-1 rounded-lg bg-white text-[#FF5722] shadow-2xs" : "px-2.5 py-1 rounded-lg text-white";
+            document.getElementById('btn-map-std').className = type === 'm' ? "px-2.5 py-1 rounded-lg bg-white text-[#FF5722] shadow-2xs" : "px-2.5 py-1 rounded-lg text-white";
+            refreshMainGoogleMapIframe();
+        }
+
+        function refreshMainGoogleMapIframe() {
+            document.getElementById('main-google-map-iframe').src = `https://maps.google.com/maps?q=${mainMapLat},${mainMapLng}&t=${mainMapType}&z=16&output=embed`;
+            document.getElementById('main-map-coords').textContent = `${mainMapLat.toFixed(4)}, ${mainMapLng.toFixed(4)}`;
+            document.getElementById('main-map-gmaps-link').href = `https://maps.google.com/maps?q=${mainMapLat},${mainMapLng}&t=${mainMapType}`;
+        }
+
+        function locateUserOnGoogleSatelliteMap() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => { mainMapLat = pos.coords.latitude; mainMapLng = pos.coords.longitude; refreshMainGoogleMapIframe(); },
+                    () => { mainMapLat = HSIPAW_LAT; mainMapLng = HSIPAW_LNG; refreshMainGoogleMapIframe(); }
+                );
+            }
+        }
+
+        const ADMIN_QUICK_REPLIES = ["Purchased items", "On the way now", "Arrived at your gate", "Please wait a moment"];
+        const CUSTOMER_QUICK_REPLIES = ["Okay, thank you!", "Please hurry", "Waiting outside"];
+
+        function countUnreadForOrder(order, viewerRole) {
+            if (!order.messages) return 0;
+            return order.messages.filter(m =>
+                viewerRole === 'customer' ? (m.sender === 'admin' && !m.readByCustomer) : (m.sender === 'customer' && !m.readByAdmin)
+            ).length;
+        }
+
+        function updateUnreadIndicators() {
+            const totalUnread = allOrders.reduce((sum, o) => sum + countUnreadForOrder(o, 'customer'), 0);
+            const dot = document.getElementById('nav-unread-dot');
+            if (totalUnread > 0) dot.classList.remove('hidden');
+            else dot.classList.add('hidden');
+        }
+
+        function openChatModal(orderId, role) {
+            activeChatOrderId = orderId;
+            activeChatRole = role;
+            const modal = document.getElementById('chat-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            const order = allOrders.find(o => o.id === orderId);
+            if (order) {
+                document.getElementById('chat-header-title').textContent = role === 'admin' ? `💬 ${order.customerName}` : `💬 Rider / Dispatch`;
+                document.getElementById('chat-header-subtitle').textContent = `Status: ${order.status}`;
+                document.getElementById('chat-order-summary').innerHTML = `<span class="truncate font-bold">📦 ${escapeHtml(order.details)}</span>`;
+                const replies = role === 'admin' ? ADMIN_QUICK_REPLIES : CUSTOMER_QUICK_REPLIES;
+                document.getElementById('chat-quick-replies').innerHTML = replies.map(txt =>
+                    `<button type="button" onclick="pushMessageToOrder('${txt}')" class="px-3 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-[#FF5722] font-bold text-xs whitespace-nowrap">${txt}</button>`
+                ).join('');
+            }
+            renderChatMessages();
+        }
+
+        function closeChatModal() {
+            activeChatOrderId = null;
+            const modal = document.getElementById('chat-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            refreshVisibleScreens();
+        }
+
+        function renderChatMessages() {
+            const order = allOrders.find(o => o.id === activeChatOrderId);
+            if (!order) return;
+            if (!order.messages) order.messages = [];
+
+            order.messages.forEach(m => {
+                if (activeChatRole === 'customer' && m.sender === 'admin') m.readByCustomer = true;
+                if (activeChatRole === 'admin' && m.sender === 'customer') m.readByAdmin = true;
+            });
+            saveOrders();
+
+            const feed = document.getElementById('chat-messages-feed');
+            if (order.messages.length === 0) {
+                feed.innerHTML = `<p class="text-center text-xs text-slate-400 py-10">No messages yet</p>`;
+                return;
+            }
+            feed.innerHTML = order.messages.map(msg => {
+                const isMine = msg.sender === activeChatRole;
+                return `
+                    <div class="flex flex-col ${isMine ? 'items-end' : 'items-start'}">
+                        <span class="text-[10px] text-slate-400 mb-0.5">${msg.time}</span>
+                        <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${isMine ? 'bg-[#FF5722] text-white' : 'bg-white border border-slate-200 text-slate-900'}">
+                            ${escapeHtml(msg.text)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        function sendChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-text-input');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = "";
+            pushMessageToOrder(text);
+        }
+
+        function pushMessageToOrder(text) {
+            const order = allOrders.find(o => o.id === activeChatOrderId);
+            if (!order) return;
+            if (!order.messages) order.messages = [];
+            order.messages.push({
+                sender: activeChatRole,
+                text,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                readByCustomer: activeChatRole === 'customer',
+                readByAdmin: activeChatRole === 'admin'
+            });
+            saveOrders();
+            renderChatMessages();
+            updateUnreadIndicators();
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str == null ? '' : String(str);
+            return div.innerHTML;
+        }
+
+        function escapeAttr(str) {
+            return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>
